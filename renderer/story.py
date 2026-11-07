@@ -1,0 +1,38 @@
+LINES = [
+    ("Never take the elevator alone after midnight.", "title", 0.5),
+    ("I live on the ninth floor of an old apartment building.", "building", 0.2),
+    ("One night, I got in the elevator and pressed nine.", "elev9", 0.2),
+    ("The doors closed. The lights flickered.", "elev9", 0.3),
+    ("Then it stopped. On floor thirteen.", "elev13", 0.3),
+    ("Our building doesn't have a thirteenth floor.", "elev13", 0.5),
+    ("The doors slid open.", "hall", 0.2),
+    ("A long, dark hallway. And at the end, a woman, facing the wall.", "hall_woman", 0.4),
+    ("You're early.", "hall_woman", 0.5),
+    ("I smashed the close button.", "elev13", 0.2),
+    ("The doors shut, and the elevator went up again.", "elev9", 0.3),
+    ("Floor nine. I ran to my apartment and locked the door.", "dark", 0.3),
+    ("Then I turned around.", "dark", 0.4),
+    ("In my living room, facing the wall, stood the woman.", "room_woman", 0.5),
+    ("Without turning, she whispered:", "room_woman", 0.2),
+    ("Now you're on time.", "dark_red", 1.2),
+]
+CAPTIONS = [
+    "NEVER TAKE THE ELEVATOR ALONE AFTER MIDNIGHT",
+    "I live on the 9th floor of an old apartment building.",
+    "One night, I got in the elevator and pressed 9.",
+    "The doors closed. The lights flickered.",
+    "Then it stopped. On floor 13.",
+    "Our building doesn't have a 13th floor.",
+    "The doors slid open.",
+    "A long, dark hallway. And at the end... a woman, facing the wall.",
+    "\"You're early.\"",
+    "I smashed the close button.",
+    "The doors shut, and the elevator went up again.",
+    "Floor 9. I ran to my apartment and locked the door.",
+    "Then I turned around.",
+    "In my living room, facing the wall... stood the woman.",
+    "Without turning, she whispered:",
+    "\"Now you're on time.\"",
+]
+# Female (whisper) voice lines, matched exactly by text
+FEMALE = ("You're early.", "Now you're on time.")

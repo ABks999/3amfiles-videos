@@ -1,0 +1,6 @@
+renderer/models/
+renderer/parts/
+renderer/*.wav
+renderer/*.json
+renderer/video_noaudio.mp4
+__pycache__/
