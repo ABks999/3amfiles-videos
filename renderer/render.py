@@ -41,10 +41,11 @@ def end_layer():
     d.text((W//2,1735),ENDTEXT[1],font=F(B,70),fill=(225,40,30),anchor='mm',stroke_width=8,stroke_fill=(0,0,0))
     return lay
 BRAND=brand_layer(); HOOKL=hook_layer(HOOK) if HOOK else None
-group_start={}
+SEG=[0]
 def frame(scene,cap_img,tg,ti,first):
     bg=bgs[scene]
-    gs=group_start.setdefault(scene,tg); z=1.0+min((tg-gs)/40,0.1)
+    # visual change on every line: alternate framing ("punch-in" cut) + slow push within the line
+    z=(1.0 if SEG[0]%2==0 else 1.07)+min(ti/30,0.05)
     cw,ch=int(BW/z/1.12),int(BH/z/1.12)
     x0=(BW-cw)//2; y0=(BH-ch)//2
     im=bg.crop((x0,y0,x0+cw,y0+ch)).resize((W,H),Image.BILINEAR)
@@ -62,6 +63,7 @@ def frame(scene,cap_img,tg,ti,first):
 if __name__=='__main__':
     lst=[]
     for n,(scene,cap,a,b) in enumerate(segs):
+        SEG[0]=n
         nf=round(b*FPS)-round(a*FPS); cap_img=end_layer() if cap=='__END__' else caption(cap)
         tmp=f'parts/p{n:02d}.tmp.mp4'; out=f'parts/p{n:02d}.mp4'
         p=subprocess.Popen(['ffmpeg','-y','-loglevel','error','-f','rawvideo','-pix_fmt','rgb24','-s',f'{W}x{H}','-r',str(FPS),'-i','-','-c:v','libx264','-crf','20','-preset','veryfast','-pix_fmt','yuv420p',tmp],stdin=subprocess.PIPE)
