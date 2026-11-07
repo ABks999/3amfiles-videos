@@ -1,31 +1,30 @@
 LINES = [
-    ("Every night at 3:00 AM, something knocked. Three times.", "door", 0.3),
-    ("I was renting a cabin alone, deep in the woods.", "cabin", 0.2),
-    ("The first night, I opened the door. Nobody.", "door", 0.3),
-    ("Just fresh snow, and footprints leading up to the cabin.", "prints", 0.3),
-    ("The second night, a voice came through the wood.", "door", 0.3),
-    ("Please. Let me in.", "dark", 0.4),
-    ("In the morning, I counted the footprints.", "prints", 0.2),
-    ("They led to the cabin. None led away.", "prints", 0.5),
-    ("That night, I heard it again. Three knocks.", "closet", 0.3),
-    ("From inside the closet.", "closet_woman", 0.8),
-    ("You let me in the first night.", "dark_red", 1.0),
+    ("My GPS told me to turn left. There was no road there.", "gps", 0.3),
+    ("Just black trees, on a highway I drive every night.", "road", 0.2),
+    ("I kept driving. It said it again. Turn left.", "gps", 0.3),
+    ("Then the screen went red. New route: Home.", "gps_red", 0.3),
+    ("But it wasn't my address.", "road", 0.3),
+    ("At a red light, the car started ringing. Incoming call.", "phone", 0.3),
+    ("The caller I.D. said: Back seat.", "phone_red", 0.5),
+    ("I looked in the mirror. The seat was empty.", "mirror", 0.7),
+    ("Then the GPS spoke, in a woman's voice.", "gps_red", 0.4),
+    ("You missed the turn. Now we go my way.", "mirror_eyes", 0.8),
 ]
 CAPTIONS = [
-    "Every night at 3:00 AM, something knocked. Three times.",
-    "I was renting a cabin alone, deep in the woods.",
-    "The first night, I opened the door. Nobody.",
-    "Just fresh snow... and footprints leading up to the cabin.",
-    "The second night, a voice came through the wood.",
-    "\"Please. Let me in.\"",
-    "In the morning, I counted the footprints.",
-    "They led to the cabin. None led away.",
-    "That night, I heard it again. Three knocks.",
-    "From INSIDE the closet.",
-    "\"You let me in the first night.\"",
+    "My GPS told me to turn left. There was NO road there.",
+    "Just black trees... on a highway I drive every night.",
+    "I kept driving. It said it again. \"Turn left.\"",
+    "Then the screen went red. NEW ROUTE: HOME.",
+    "But it wasn't my address.",
+    "At a red light, the car started ringing. Incoming call.",
+    "The caller ID said... BACK SEAT.",
+    "I looked in the mirror. The seat was empty.",
+    "Then the GPS spoke... in a woman's voice.",
+    "\"You missed the turn. Now we go MY way.\"",
 ]
 # Female (whisper) voice lines, matched exactly by text
-FEMALE = ("Please. Let me in.", "You let me in the first night.")
-HOOK = "NEVER ANSWER THREE KNOCKS"
-TOPLABEL = ""
-LOCATION = ("BERLIN, NEW HAMPSHIRE", "JANUARY 11, 2020")
+FEMALE = ("You missed the turn. Now we go my way.",)
+HOOK = "THERE WAS NO ROAD"
+TOPLABEL = "PART 1"
+ENDTEXT = ("FOLLOW FOR", "PART 2")
+LOCATION = ("ROUTE 9, VERMONT", "NOVEMBER 3, 2019")
