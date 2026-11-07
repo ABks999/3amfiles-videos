@@ -1,31 +1,31 @@
 LINES = [
-    ("At 3:07 AM, the phone behind the counter rang.", "phone", 0.3),
-    ("I was alone on the night shift. Empty pumps. Empty road.", "outside", 0.2),
-    ("A woman's voice whispered just five words.", "phone", 0.3),
-    ("Don't look at camera two.", "phone_red", 0.4),
-    ("Of course I looked.", "cam_empty", 0.2),
-    ("Aisle three. Empty. Just the hum of the freezers.", "cam_empty", 0.3),
-    ("Then a man stepped into the frame.", "cam_man", 0.3),
-    ("He was standing right behind the counter.", "cam_man_close", 0.4),
-    ("Right behind me.", "dark", 0.8),
-    ("The phone rang again.", "phone_red", 0.4),
-    ("You looked.", "dark_red", 1.0),
+    ("At 12:41 AM, my elevator stopped on floor thirteen.", "elev13", 0.3),
+    ("My building doesn't have a thirteenth floor.", "building", 0.3),
+    ("I live on nine. I pressed nine.", "elev9", 0.2),
+    ("The doors slid open anyway.", "hall", 0.3),
+    ("A long hallway. A woman at the end, facing the wall.", "hall_woman", 0.4),
+    ("You're early.", "hall_woman", 0.4),
+    ("I hit the button until the doors closed.", "elev9", 0.2),
+    ("Floor nine. I ran inside and locked my door.", "dark", 0.3),
+    ("Then I turned on the light.", "dark", 0.7),
+    ("She was standing in my living room. Facing the wall.", "room_woman", 0.5),
+    ("Now you're on time.", "dark_red", 1.0),
 ]
 CAPTIONS = [
-    "At 3:07 AM, the phone behind the counter rang.",
-    "I was alone on the night shift. Empty pumps. Empty road.",
-    "A woman's voice whispered just five words.",
-    "\"Don't look at camera two.\"",
-    "Of course I looked.",
-    "Aisle 3. Empty. Just the hum of the freezers.",
-    "Then a man stepped into the frame.",
-    "He was standing right behind the counter.",
-    "Right behind ME.",
-    "The phone rang again.",
-    "\"You looked.\"",
+    "At 12:41 AM, my elevator stopped on floor 13.",
+    "My building doesn't have a 13th floor.",
+    "I live on 9. I pressed 9.",
+    "The doors slid open anyway.",
+    "A long hallway. A woman at the end... facing the wall.",
+    "\"You're early.\"",
+    "I hit the button until the doors closed.",
+    "Floor 9. I ran inside and locked my door.",
+    "Then I turned on the light.",
+    "She was standing in my living room. Facing the wall.",
+    "\"Now you're on time.\"",
 ]
 # Female (whisper) voice lines, matched exactly by text
-FEMALE = ("Don't look at camera two.", "You looked.")
-HOOK = "DON'T LOOK AT CAMERA TWO"
+FEMALE = ("You're early.", "Now you're on time.")
+HOOK = "NO 13TH FLOOR"
 TOPLABEL = ""
-LOCATION = ("ROUTE 50, NEVADA", "FEBRUARY 2, 2018")
+LOCATION = ("CHICAGO, ILLINOIS", "MARCH 19, 2021")
