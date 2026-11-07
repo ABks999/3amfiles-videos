@@ -1,31 +1,31 @@
 LINES = [
-    ("At 12:41 AM, my elevator stopped on floor thirteen.", "elev13", 0.3),
-    ("My building doesn't have a thirteenth floor.", "building", 0.3),
-    ("I live on nine. I pressed nine.", "elev9", 0.2),
-    ("The doors slid open anyway.", "hall", 0.3),
-    ("A long hallway. A woman at the end, facing the wall.", "hall_woman", 0.4),
-    ("You're early.", "hall_woman", 0.4),
-    ("I hit the button until the doors closed.", "elev9", 0.2),
-    ("Floor nine. I ran inside and locked my door.", "dark", 0.3),
-    ("Then I turned on the light.", "dark", 0.7),
-    ("She was standing in my living room. Facing the wall.", "room_woman", 0.5),
-    ("Now you're on time.", "dark_red", 1.0),
+    ("Every night at 3:00 AM, something knocked. Three times.", "door", 0.3),
+    ("I was renting a cabin alone, deep in the woods.", "cabin", 0.2),
+    ("The first night, I opened the door. Nobody.", "door", 0.3),
+    ("Just fresh snow, and footprints leading up to the cabin.", "prints", 0.3),
+    ("The second night, a voice came through the wood.", "door", 0.3),
+    ("Please. Let me in.", "dark", 0.4),
+    ("In the morning, I counted the footprints.", "prints", 0.2),
+    ("They led to the cabin. None led away.", "prints", 0.5),
+    ("That night, I heard it again. Three knocks.", "closet", 0.3),
+    ("From inside the closet.", "closet_woman", 0.8),
+    ("You let me in the first night.", "dark_red", 1.0),
 ]
 CAPTIONS = [
-    "At 12:41 AM, my elevator stopped on floor 13.",
-    "My building doesn't have a 13th floor.",
-    "I live on 9. I pressed 9.",
-    "The doors slid open anyway.",
-    "A long hallway. A woman at the end... facing the wall.",
-    "\"You're early.\"",
-    "I hit the button until the doors closed.",
-    "Floor 9. I ran inside and locked my door.",
-    "Then I turned on the light.",
-    "She was standing in my living room. Facing the wall.",
-    "\"Now you're on time.\"",
+    "Every night at 3:00 AM, something knocked. Three times.",
+    "I was renting a cabin alone, deep in the woods.",
+    "The first night, I opened the door. Nobody.",
+    "Just fresh snow... and footprints leading up to the cabin.",
+    "The second night, a voice came through the wood.",
+    "\"Please. Let me in.\"",
+    "In the morning, I counted the footprints.",
+    "They led to the cabin. None led away.",
+    "That night, I heard it again. Three knocks.",
+    "From INSIDE the closet.",
+    "\"You let me in the first night.\"",
 ]
 # Female (whisper) voice lines, matched exactly by text
-FEMALE = ("You're early.", "Now you're on time.")
-HOOK = "NO 13TH FLOOR"
+FEMALE = ("Please. Let me in.", "You let me in the first night.")
+HOOK = "NEVER ANSWER THREE KNOCKS"
 TOPLABEL = ""
-LOCATION = ("CHICAGO, ILLINOIS", "MARCH 19, 2021")
+LOCATION = ("BERLIN, NEW HAMPSHIRE", "JANUARY 11, 2020")
