@@ -1,20 +1,60 @@
-import sys, json, numpy as np, soundfile as sf
+import sys, json, subprocess, urllib.request, numpy as np, soundfile as sf
 import os; sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 from story import LINES, FEMALE
-from kokoro_onnx import Kokoro
-k = Kokoro('models/kokoro-v1.0.onnx', 'models/voices-v1.0.bin')
-sr_out = 24000; parts = []; times = []; speech = []; t = 0.0
+# Narration: ElevenLabs when the ELEVENLABS_API_KEY secret is available (real human-sounding voices),
+# otherwise the free local Kokoro voices. Voices can be changed in voices.json.
+CFG = {'narrator': 'nPczCjzI2devNBz1zQrb', 'female': 'EXAVITQu4vr4xnSDxMaL', 'model': 'eleven_multilingual_v2'}
+try: CFG.update(json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'voices.json'))))
+except Exception: pass
+KEY = os.environ.get('ELEVENLABS_API_KEY', '').strip()
+sr_out = 24000
+
+def eleven(text, female, prev_text, next_text):
+    vid = CFG['female'] if female else CFG['narrator']
+    body = {'text': text, 'model_id': CFG['model'], 'previous_text': prev_text, 'next_text': next_text,
+            'voice_settings': ({'stability': 0.30, 'similarity_boost': 0.75, 'style': 0.55, 'use_speaker_boost': True} if female else
+                               {'stability': 0.38, 'similarity_boost': 0.80, 'style': 0.45, 'use_speaker_boost': True})}
+    req = urllib.request.Request(f'https://api.elevenlabs.io/v1/text-to-speech/{vid}?output_format=mp3_44100_128',
+                                 data=json.dumps(body).encode(), headers={'xi-api-key': KEY, 'Content-Type': 'application/json', 'Accept': 'audio/mpeg'})
+    mp3 = urllib.request.urlopen(req, timeout=60).read()
+    pcm = subprocess.run(['ffmpeg', '-loglevel', 'error', '-i', '-', '-f', 'f32le', '-ac', '1', '-ar', str(sr_out), '-'],
+                         input=mp3, capture_output=True, check=True).stdout
+    a = np.frombuffer(pcm, dtype=np.float32).copy()
+    # trim leading/trailing silence so pauses stay as written in story.py
+    nz = np.where(np.abs(a) > 0.01)[0]
+    if len(nz): a = a[max(0, nz[0]-240):nz[-1]+1200]
+    return a
+
+def kokoro_lines():
+    from kokoro_onnx import Kokoro
+    k = Kokoro('models/kokoro-v1.0.onnx', 'models/voices-v1.0.bin')
+    VAR = [1.0, 1.04, 0.97, 1.03]; N = len(LINES); out = []
+    for i, (text, scene, pause) in enumerate(LINES):
+        voice = 'af_nicole' if text in FEMALE else 'am_fenrir'
+        sp = (0.94 if i >= N-2 else VAR[i % 4]) if voice == 'am_fenrir' else 0.85
+        a, sr = k.create(text, voice=voice, speed=sp, lang='en-us'); out.append(a.astype(np.float32))
+    return out
+
+clips = None; engine = 'kokoro'
+if KEY:
+    try:
+        clips = []
+        for i, (text, scene, pause) in enumerate(LINES):
+            prev_t = ' '.join(l[0] for l in LINES[max(0, i-2):i]); next_t = LINES[i+1][0] if i+1 < len(LINES) else ''
+            clips.append(eleven(text, text in FEMALE, prev_t, next_t))
+        engine = 'elevenlabs'
+    except Exception as e:
+        print('ElevenLabs failed, falling back to Kokoro:', e); clips = None
+if clips is None: clips = kokoro_lines()
+print('voice engine:', engine)
+open('engine.txt', 'w').write(engine)
+
+parts = []; times = []; speech = []; t = 0.0
 lead = np.zeros(int(0.3*sr_out), dtype=np.float32); parts.append(lead); t += 0.3
-VAR = [1.0, 1.04, 0.97, 1.03]  # small tempo changes per line so the narrator doesn't sound flat
-N = len(LINES)
-for i, (text, scene, pause) in enumerate(LINES):
-    voice = 'af_nicole' if text in FEMALE else 'am_fenrir'
-    sp = (0.94 if i >= N-2 else VAR[i % 4]) if voice == 'am_fenrir' else 0.85
-    a, sr = k.create(text, voice=voice, speed=sp, lang='en-us')
-    a = a.astype(np.float32)
-    start = t; parts.append(a); t += len(a)/sr
+for (text, scene, pause), a in zip(LINES, clips):
+    start = t; parts.append(a); t += len(a)/sr_out
     speech.append([start, t])
-    parts.append(np.zeros(int(pause*sr), dtype=np.float32)); t += pause
+    parts.append(np.zeros(int(pause*sr_out), dtype=np.float32)); t += pause
     times.append([start, t])
 audio = np.concatenate(parts); audio = audio/np.max(np.abs(audio))*0.9
 sf.write('voice.wav', audio, sr_out)
