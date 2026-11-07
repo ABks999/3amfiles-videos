@@ -1,3 +1,18 @@
+# ===================== SCENE STYLE GUIDE (read before adding scenes) =====================
+# Hamza finds simple scenes boring. Every NEW scene must be a rich, cinematic illustration:
+# - 3 depth layers: far background (sky/wall with texture, moon, windows, stars, distant shapes),
+#   midground (the main object/room, drawn with several parts, edges, highlights and shadows),
+#   foreground (dark silhouettes framing the shot: door frame, branches, furniture edge, car pillar).
+# - at least 8-12 distinct drawn elements, not one big rectangle. Add small details: cracks, picture
+#   frames, wires, leaves, light switches, curtains, reflections, handprints, etc.
+# - 1-2 strong coloured light sources (lamp, screen, moon, streetlight, candle) using glow(), with
+#   light falling on nearby surfaces (lighter polygons) and long dark shadows.
+# - one accent colour per scene (sickly green, blood red, cold cyan, amber) on a dark blue/black base.
+# - figures: silhouettes with a clear readable pose (tilted head, long arms, too-tall body),
+#   glowing eyes only when the creepy reveal happens.
+# - render.py adds colour grade, bloom, fog, dust, camera motion and effects on top automatically.
+# - keep the top ~260 px and y 1500-1800 (captions) free of the main subject.
+# ==========================================================================================
 import sys, json, random, numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import os; sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))

@@ -22,7 +22,7 @@ CAPTIONS = [
     "Then the GPS spoke... in a woman's voice.",
     "\"You missed the turn. Now we go MY way.\"",
 ]
-# Female (whisper) voice lines, matched exactly by text
+# Female (whisper) voice lines (re-rendered 7 Nov to test the upgraded renderer), matched exactly by text
 FEMALE = ("You missed the turn. Now we go my way.",)
 HOOK = "THERE WAS NO ROAD"
 TOPLABEL = "PART 1"
