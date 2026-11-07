@@ -1,29 +1,31 @@
 LINES = [
-    ("My GPS told me to turn left. There was no road there.", "gps", 0.3),
-    ("Just black trees, on a highway I drive every night.", "road", 0.2),
-    ("I kept driving. It said it again. Turn left.", "gps", 0.3),
-    ("Then the screen went red. New route: Home.", "gps_red", 0.3),
-    ("But it wasn't my address.", "road", 0.3),
-    ("At a red light, the car started ringing. Incoming call.", "phone", 0.3),
-    ("The caller I.D. said: Back seat.", "phone_red", 0.5),
-    ("I looked in the mirror. The seat was empty.", "mirror", 0.7),
-    ("Then the GPS spoke, in a woman's voice.", "gps_red", 0.4),
-    ("You missed the turn. Now we go my way.", "mirror_eyes", 0.8),
+    ("At 3:07 AM, the phone behind the counter rang.", "phone", 0.3),
+    ("I was alone on the night shift. Empty pumps. Empty road.", "outside", 0.2),
+    ("A woman's voice whispered just five words.", "phone", 0.3),
+    ("Don't look at camera two.", "phone_red", 0.4),
+    ("Of course I looked.", "cam_empty", 0.2),
+    ("Aisle three. Empty. Just the hum of the freezers.", "cam_empty", 0.3),
+    ("Then a man stepped into the frame.", "cam_man", 0.3),
+    ("He was standing right behind the counter.", "cam_man_close", 0.4),
+    ("Right behind me.", "dark", 0.8),
+    ("The phone rang again.", "phone_red", 0.4),
+    ("You looked.", "dark_red", 1.0),
 ]
 CAPTIONS = [
-    "My GPS told me to turn left. There was NO road there.",
-    "Just black trees... on a highway I drive every night.",
-    "I kept driving. It said it again. \"Turn left.\"",
-    "Then the screen went red. NEW ROUTE: HOME.",
-    "But it wasn't my address.",
-    "At a red light, the car started ringing. Incoming call.",
-    "The caller ID said... BACK SEAT.",
-    "I looked in the mirror. The seat was empty.",
-    "Then the GPS spoke... in a woman's voice.",
-    "\"You missed the turn. Now we go MY way.\"",
+    "At 3:07 AM, the phone behind the counter rang.",
+    "I was alone on the night shift. Empty pumps. Empty road.",
+    "A woman's voice whispered just five words.",
+    "\"Don't look at camera two.\"",
+    "Of course I looked.",
+    "Aisle 3. Empty. Just the hum of the freezers.",
+    "Then a man stepped into the frame.",
+    "He was standing right behind the counter.",
+    "Right behind ME.",
+    "The phone rang again.",
+    "\"You looked.\"",
 ]
-# Female (whisper) voice lines (re-rendered 7 Nov to test the upgraded renderer), matched exactly by text
-FEMALE = ("You missed the turn. Now we go my way.",)
-HOOK = "THERE WAS NO ROAD"
-TOPLABEL = "PART 1"
-ENDTEXT = ("FOLLOW FOR", "PART 2")
+# Female (whisper) voice lines, matched exactly by text
+FEMALE = ("Don't look at camera two.", "You looked.")
+HOOK = "DON'T LOOK AT CAMERA TWO"
+TOPLABEL = ""
+LOCATION = ("ROUTE 50, NEVADA", "FEBRUARY 2, 2018")
