@@ -3,7 +3,7 @@ import os; sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 from story import LINES, FEMALE
 from kokoro_onnx import Kokoro
 k = Kokoro('models/kokoro-v1.0.onnx', 'models/voices-v1.0.bin')
-sr_out = 24000; parts = []; times = []; t = 0.0
+sr_out = 24000; parts = []; times = []; speech = []; t = 0.0
 lead = np.zeros(int(0.3*sr_out), dtype=np.float32); parts.append(lead); t += 0.3
 VAR = [1.0, 1.04, 0.97, 1.03]  # small tempo changes per line so the narrator doesn't sound flat
 N = len(LINES)
@@ -13,9 +13,15 @@ for i, (text, scene, pause) in enumerate(LINES):
     a, sr = k.create(text, voice=voice, speed=sp, lang='en-us')
     a = a.astype(np.float32)
     start = t; parts.append(a); t += len(a)/sr
+    speech.append([start, t])
     parts.append(np.zeros(int(pause*sr), dtype=np.float32)); t += pause
     times.append([start, t])
 audio = np.concatenate(parts); audio = audio/np.max(np.abs(audio))*0.9
 sf.write('voice.wav', audio, sr_out)
 json.dump(times, open('times.json','w'))
+json.dump(speech, open('speech.json','w'))  # when each line's words are actually spoken (for word captions)
+try:
+    import sfx; sfx.build(LINES, times, speech, t)  # sound effects + music bed -> sfx.wav
+except Exception as e:
+    print('sfx failed:', e)
 print(t)
