@@ -105,9 +105,62 @@ def room():
     d.polygon([(x-70,740),(x+70,740),(x+85,1000),(x-85,1000)],fill=(3,3,3))
     im=glow(im,(300,500),220,(60,70,95),0.3)
     return im
+def cabin():
+    im=base((4,8,20),(14,16,24)); d=ImageDraw.Draw(im)
+    for i in range(120):
+        x=(i*97)%BW; y=(i*53)%1100; d.ellipse([x,y,x+5,y+5],fill=(170,175,190))
+    d.rectangle([0,1450,BW,BH],fill=(150,155,170))
+    for x in (40,170,1000,1120):
+        d.polygon([(x,620),(x-130,1500),(x+130,1500)],fill=(8,12,14))
+    d.rectangle([330,1000,880,1470],fill=(26,20,18))
+    d.polygon([(280,1010),(cx-0,700),(930,1010)],fill=(18,14,14))
+    d.polygon([(260,1020),(cx,690),(950,1020),(930,1000),(cx,725),(280,1000)],fill=(200,205,220))
+    d.rectangle([420,1160,560,1300],fill=(190,140,60)); d.line([490,1160,490,1300],fill=(40,28,20),width=8); d.line([420,1230,560,1230],fill=(40,28,20),width=8)
+    d.rectangle([660,1180,780,1470],fill=(36,26,22))
+    im=glow(im,(490,1230),170,(200,140,60),0.45)
+    return im
+def door():
+    im=base((14,10,8),(20,14,10)); d=ImageDraw.Draw(im)
+    d.rectangle([0,1600,BW,BH],fill=(26,18,14))
+    d.rectangle([300,420,910,1600],fill=(44,30,22))
+    for x in (330,600): d.rectangle([x,460,x+250,980],outline=(30,20,14),width=10); d.rectangle([x,1040,x+250,1560],outline=(30,20,14),width=10)
+    d.ellipse([820,1020,860,1060],fill=(120,100,60))
+    d.rectangle([300,1590,910,1606],fill=(140,170,220))
+    im=glow(im,(cx,1600),260,(70,100,160),0.45)
+    return im
+def prints():
+    im=base((10,14,26),(120,126,142)); d=ImageDraw.Draw(im)
+    d.rectangle([0,0,BW,700],fill=(6,8,14))
+    d.rectangle([380,420,830,720],fill=(22,16,14)); d.polygon([(340,430),(cx,260),(870,430)],fill=(190,195,210))
+    d.rectangle([560,560,650,720],fill=(30,22,18))
+    d.polygon([(0,700),(BW,700),(BW,BH),(0,BH)],fill=(132,138,156))
+    for k in range(12):
+        t=k/11; y=BH-120-t*(BH-120-760); s=1-0.8*t
+        off=(1 if k%2 else -1)*60*s; x=cx+off
+        d.ellipse([x-26*s,y-50*s,x+26*s,y+50*s],fill=(70,76,96))
+    im=glow(im,(605,640),120,(150,160,200),0.25)
+    return im
+def closet(open_=False):
+    im=base((6,8,14),(12,12,16)); d=ImageDraw.Draw(im)
+    d.rectangle([0,1400,BW,BH],fill=(20,18,18))
+    d.rectangle([520,380,1060,1420],fill=(34,30,28))
+    if open_:
+        d.rectangle([700,410,880,1410],fill=(2,2,3))
+        x=790; d.ellipse([x-40,640,x+40,740],fill=(10,10,12)); d.polygon([(x-60,740),(x+60,740),(x+80,1400),(x-80,1400)],fill=(10,10,12))
+        d.ellipse([x-22,680,x-10,690],fill=(190,190,170)); d.ellipse([x+10,680,x+22,690],fill=(190,190,170))
+        d.polygon([(880,410),(1040,380),(1040,1440),(880,1410)],fill=(44,38,34))
+    else:
+        d.line([790,400,790,1410],fill=(14,12,12),width=8)
+        d.rectangle([700,410,710,1410],fill=(8,8,8))
+    d.ellipse([760,880,775,895],fill=(110,95,60)); d.ellipse([805,880,820,895],fill=(110,95,60))
+    d.rounded_rectangle([60,1150,600,1520],30,fill=(40,34,40)); d.rounded_rectangle([40,1000,140,1520],30,fill=(46,40,44))
+    d.rounded_rectangle([170,1110,380,1200],30,fill=(150,150,165))
+    im=glow(im,(260,700),240,(50,70,110),0.3)
+    return im
 # Scene library. Add new scene functions above and register them here.
 SC={'title':title,'outside':outside,'phone':phone,'phone_red':lambda:phone(True),'cam_empty':lambda:cam(0),'cam_man':lambda:cam(1),'cam_man_close':lambda:cam(2),'dark':dark,'dark_red':lambda:dark(True),
-    'building':building,'elev9':lambda:elevator(9),'elev13':lambda:elevator(13),'hall':lambda:hall(False),'hall_woman':lambda:hall(True),'room_woman':room}
+    'building':building,'elev9':lambda:elevator(9),'elev13':lambda:elevator(13),'hall':lambda:hall(False),'hall_woman':lambda:hall(True),'room_woman':room,
+    'cabin':cabin,'door':door,'prints':prints,'closet':lambda:closet(False),'closet_woman':lambda:closet(True)}
 def caption(text):
     lay=Image.new('RGBA',(W,H),(0,0,0,0)); d=ImageDraw.Draw(lay); f=F(B,70)
     words=text.split(); lines=[]; cur=''
