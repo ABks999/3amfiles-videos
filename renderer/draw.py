@@ -157,10 +157,54 @@ def closet(open_=False):
     d.rounded_rectangle([170,1110,380,1200],30,fill=(150,150,165))
     im=glow(im,(260,700),240,(50,70,110),0.3)
     return im
+def road():
+    im=base((3,5,12),(8,8,12)); d=ImageDraw.Draw(im)
+    vx,vy=cx,880
+    d.rectangle([0,vy,BW,BH],fill=(10,12,10))
+    for x in range(-40,BW+80,90):
+        h=260+(x*37)%220; d.polygon([(x,vy-h),(x-70,vy+10),(x+70,vy+10)],fill=(4,7,6))
+    d.polygon([(vx-30,vy),(vx+30,vy),(BW+200,BH),(-200,BH)],fill=(28,28,30))
+    for k in range(7):
+        t=k/6; y0=vy+20+(BH-vy)*t**1.7; y1=y0+30+120*t**1.5; w=3+14*t
+        d.polygon([(vx-w/2,y0),(vx+w/2,y0),(vx+w,y1),(vx-w,y1)],fill=(200,180,90))
+    im=glow(im,(vx,1500),520,(150,140,110),0.35)
+    d=ImageDraw.Draw(im); d.polygon([(0,1650),(BW,1650),(BW,BH),(0,BH)],fill=(6,6,7))
+    d.arc([cx-520,1560,cx+520,2500],200,340,fill=(14,14,16),width=60)
+    return im
+def gps(red=False):
+    im=base((4,4,8),(10,9,10)); d=ImageDraw.Draw(im)
+    d.polygon([(0,520),(BW,520),(BW,380),(0,380)],fill=(6,8,14))
+    d.rectangle([0,1050,BW,BH],fill=(16,15,16))
+    d.rounded_rectangle([230,600,980,1100],40,fill=(20,20,22))
+    sc=(150,20,15) if red else (20,70,110)
+    d.rounded_rectangle([270,640,940,1060],24,fill=sc)
+    lc=(255,120,100) if red else (120,210,255)
+    d.line([605,1020,605,860,470,760],fill=lc,width=44,joint='curve')
+    d.polygon([(470,700),(430,800),(530,790)],fill=lc)
+    d.ellipse([585,990,625,1030],fill=(255,255,255))
+    im=glow(im,(605,850),330,sc,0.7); d=ImageDraw.Draw(im)
+    d.arc([cx-560,1250,cx+560,2350],180,360,fill=(8,8,9),width=90)
+    d.rectangle([cx-70,1300,cx+70,1700],fill=(8,8,9))
+    return im
+def mirror(eyes=False):
+    im=base((6,6,10),(12,10,12)); d=ImageDraw.Draw(im)
+    d.rectangle([0,0,BW,330],fill=(10,10,14)); d.rectangle([cx-20,330,cx+20,560],fill=(16,16,18))
+    d.rounded_rectangle([110,540,1100,1120],90,fill=(24,24,26))
+    d.rounded_rectangle([150,580,1060,1080],70,fill=(14,16,22))
+    d.rounded_rectangle([200,860,1010,1080],40,fill=(30,26,28))
+    d.rectangle([260,700,380,880],fill=(24,22,24)); d.rectangle([830,700,950,880],fill=(24,22,24))
+    d.rectangle([150,620,1060,700],fill=(26,30,42))
+    if eyes:
+        x=cx; d.ellipse([x-80,640,x+80,820],fill=(3,3,4)); d.polygon([(x-150,800),(x+150,800),(x+200,1080),(x-200,1080)],fill=(3,3,4))
+        d.ellipse([x-46,712,x-22,726],fill=(230,220,200)); d.ellipse([x+22,712,x+46,726],fill=(230,220,200))
+    im=glow(im,(cx,660),300,(60,70,100),0.3)
+    d=ImageDraw.Draw(im); d.rectangle([0,1250,BW,BH],fill=(14,12,12))
+    return im
 # Scene library. Add new scene functions above and register them here.
 SC={'title':title,'outside':outside,'phone':phone,'phone_red':lambda:phone(True),'cam_empty':lambda:cam(0),'cam_man':lambda:cam(1),'cam_man_close':lambda:cam(2),'dark':dark,'dark_red':lambda:dark(True),
     'building':building,'elev9':lambda:elevator(9),'elev13':lambda:elevator(13),'hall':lambda:hall(False),'hall_woman':lambda:hall(True),'room_woman':room,
-    'cabin':cabin,'door':door,'prints':prints,'closet':lambda:closet(False),'closet_woman':lambda:closet(True)}
+    'cabin':cabin,'door':door,'prints':prints,'closet':lambda:closet(False),'closet_woman':lambda:closet(True),
+    'road':road,'gps':gps,'gps_red':lambda:gps(True),'mirror':mirror,'mirror_eyes':lambda:mirror(True)}
 def caption(text):
     lay=Image.new('RGBA',(W,H),(0,0,0,0)); d=ImageDraw.Draw(lay); f=F(B,70)
     words=text.split(); lines=[]; cur=''
