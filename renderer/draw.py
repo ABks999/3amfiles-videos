@@ -450,11 +450,87 @@ def clipping():  # old newspaper clipping under a desk lamp
     d.polygon([(0,BH),(0,1560),(200,1620),(320,BH)],fill=(8,6,5))  # foreground shadow
     return noise_tex(im,7)
 # Scene library. Add new scene functions above and register them here.
+
+def _crib(d,x,y,w,h,col,bar):  # crib seen from the side; (x,y)=top-left
+    d.rectangle([x,y+h*0.55,x+w,y+h*0.62],fill=col)          # mattress rail
+    d.rectangle([x,y,x+w,y+h*0.07],fill=col)                 # top rail
+    d.rectangle([x-w*0.04,y-h*0.12,x+w*0.03,y+h],fill=col); d.rectangle([x+w*0.97,y-h*0.12,x+w*1.04,y+h],fill=col)  # posts
+    for k in range(1,12): xx=x+w*k/12; d.line([xx,y+h*0.07,xx,y+h*0.55],fill=bar,width=max(2,int(w/90)))
+def _nv(mode):  # night-vision camera picture (green), returns an image of size 600x420
+    sw,sh=600,420; im=Image.new('RGB',(sw,sh),(8,30,14)); d=ImageDraw.Draw(im)
+    if mode=='me':  # living room seen from a ceiling corner: sofa, girl on it, figure behind
+        d.polygon([(0,0),(sw,0),(sw,sh*0.55),(0,sh*0.62)],fill=(14,48,22)); d.polygon([(0,sh*0.62),(sw,sh*0.55),(sw,sh),(0,sh)],fill=(10,38,18))
+        d.rectangle([60,60,190,170],fill=(40,110,55)); d.line([125,60,125,170],fill=(14,48,22),width=5)  # window
+        d.rounded_rectangle([150,250,470,360],20,fill=(24,72,34)); d.rounded_rectangle([140,215,480,275],18,fill=(30,86,40))  # sofa
+        d.ellipse([285,195,325,240],fill=(70,150,80)); d.rounded_rectangle([272,236,338,300],14,fill=(58,130,68))  # girl
+        d.rectangle([292,262,318,280],fill=(140,230,140))  # monitor glow in her hands
+        d.ellipse([382,40,428,96],fill=(4,14,6)); d.polygon([(372,95),(438,95),(450,250),(360,250)],fill=(4,14,6))  # figure behind sofa
+        d.polygon([(372,100),(330,230),(345,236),(385,120)],fill=(4,14,6))  # arm reaching toward her
+        d.ellipse([393,60,403,68],fill=(210,255,210)); d.ellipse([408,60,418,68],fill=(210,255,210))
+    else:  # nursery from above the crib
+        d.polygon([(0,sh*0.6),(sw,sh*0.6),(sw,sh),(0,sh)],fill=(10,40,18))
+        d.rectangle([420,50,540,170],fill=(34,96,48)); d.line([480,50,480,170],fill=(10,36,16),width=5)
+        d.line([200,0,200,70],fill=(60,140,70),width=3)
+        for k in range(4): a=k*1.57; d.ellipse([200+50*math.cos(a)-12,90+10*math.sin(a)-12,200+50*math.cos(a)+12,90+10*math.sin(a)+12],fill=(60,140,70))  # mobile
+        _crib(d,110,150,300,190,(40,110,55),(34,96,48))
+        d.ellipse([220,215,300,250],fill=(90,180,100)); d.ellipse([290,212,322,244],fill=(110,200,115))  # sleeping baby
+        if mode=='man':
+            d.ellipse([430,60,480,118],fill=(3,12,5)); d.polygon([(420,116),(492,116),(505,sh),(410,sh)],fill=(3,12,5))
+            d.polygon([(425,140),(380,170),(392,184),(440,160)],fill=(3,12,5))  # long arm resting on the crib rail
+            d.polygon([(380,170),(350,158),(354,170),(392,184)],fill=(3,12,5))
+            d.ellipse([440,80,451,88],fill=(220,255,220)); d.ellipse([459,80,470,88],fill=(220,255,220))
+    a=np.asarray(im,dtype=np.float32)
+    a[::4]*=0.72                                              # scanlines
+    a+=np.random.default_rng(5).normal(0,10,a.shape[:2])[...,None]*np.array([0.4,1,0.5])
+    im=Image.fromarray(np.clip(a,0,255).astype('uint8')); d=ImageDraw.Draw(im)
+    d.text((18,14),'CAM 1' if mode!='me' else 'CAM 2',font=F(M,28),fill=(170,255,170)); d.ellipse([sw-44,18,sw-22,40],fill=(230,40,30))
+    d.text((18,sh-44),'02:47 AM',font=F(M,28),fill=(170,255,170))
+    return im
+def monitor(mode='empty'):  # handheld baby monitor glowing on a sofa armrest in a dark living room
+    im=base((6,8,14),(12,10,12)); d=ImageDraw.Draw(im)
+    d.rectangle([700,300,1060,820],fill=(16,22,38)); d.line([880,300,880,820],fill=(6,6,9),width=14); d.line([700,560,1060,560],fill=(6,6,9),width=14)  # window
+    for x in (680,1080): d.polygon([(x-30,260),(x+30,260),(x+50,1000),(x-40,1000)],fill=(10,9,12))  # curtains
+    d.rectangle([110,360,330,560],fill=(22,20,22)); d.rectangle([125,375,315,545],fill=(30,30,38))  # picture frame
+    d.ellipse([170,410,270,500],fill=(40,40,50))
+    d.rectangle([0,1000,BW,1012],fill=(26,22,22))  # baseboard
+    vgrad(d,(0,1012,BW,BH),(22,18,18),(10,8,8))
+    d.rounded_rectangle([-60,1120,BW+60,1520],80,fill=(30,24,26)); d.rounded_rectangle([-60,1060,360,1200],60,fill=(38,30,32))  # sofa + armrest
+    d.line([0,1300,BW,1300],fill=(22,18,20),width=6)
+    px,py=cx,840
+    d.rounded_rectangle([px-360,py-300,px+360,py+330],50,fill=(20,20,24)); d.rounded_rectangle([px-345,py-285,px+345,py+315],44,fill=(34,34,40))
+    d.rectangle([px+230,py-420,px+262,py-300],fill=(22,22,26)); d.ellipse([px+226,py-436,px+266,py-404],fill=(28,28,32))  # antenna
+    for k in range(3): d.ellipse([px-60+k*50,py+250,px-30+k*50,py+280],fill=(60,60,70))
+    d.ellipse([px+220,py+250,px+250,py+280],fill=(60,220,90) if mode!='me' else (230,50,40))
+    scr=_nv(mode); im.paste(scr,(px-300,py-250))
+    im=glow(im,(px,py-40),420,(40,150,70) if mode!='me' else (60,150,60),0.5); im.paste(scr.point(lambda v:min(255,int(v*1.15))),(px-300,py-250))
+    im=cone(im,(px,py+330),(px-600,1500),(px+600,1500),(40,120,60),0.22,50)
+    d=ImageDraw.Draw(im); d.line([px-280,py-240,px-120,py+150],fill=(90,140,100),width=4)  # glare
+    return noise_tex(im,7)
+def nursery():  # dark nursery, crib under the window, star night light
+    im=base((8,10,20),(14,12,16)); d=ImageDraw.Draw(im)
+    for y in range(300,1150,70):
+        for x in range(30 if (y//70)%2 else 70,BW,80): d.ellipse([x-5,y-5,x+5,y+5],fill=(20,22,34))  # wallpaper dots
+    d.rectangle([380,330,840,860],fill=(26,34,58)); im=moon(im,700,460,55); d=ImageDraw.Draw(im)
+    d.line([610,330,610,860],fill=(8,8,12),width=14); d.line([380,595,840,595],fill=(8,8,12),width=14)
+    for x in (360,860): d.polygon([(x-40,300),(x+40,300),(x+60,1000),(x-50,1000)],fill=(30,22,34))
+    d.rectangle([0,1150,BW,1162],fill=(30,26,30)); vgrad(d,(0,1162,BW,BH),(30,24,24),(12,10,10))
+    im=cone(im,(610,600),(330,1500),(950,1500),(80,100,150),0.25,40); d=ImageDraw.Draw(im)
+    _crib(d,250,940,700,480,(48,40,44),(38,32,36))
+    d.ellipse([480,1160,700,1250],fill=(70,64,80)); d.ellipse([680,1150,760,1230],fill=(90,80,90))  # sleeping baby
+    d.line([600,700,600,840],fill=(50,46,56),width=4)
+    for k in range(5): a=k*1.26; d.ellipse([600+90*math.cos(a)-18,870+16*math.sin(a)-18,600+90*math.cos(a)+18,870+16*math.sin(a)+18],fill=(60,54,70))  # mobile
+    d.rounded_rectangle([60,1250,220,1500],12,fill=(24,20,22))  # dresser
+    im=glow(im,(140,1220),110,(200,150,60),0.7); d=ImageDraw.Draw(im)
+    st=[(140+44*math.cos(math.pi/2+k*math.pi/5)*(1 if k%2==0 else 0.45),1220-44*math.sin(math.pi/2+k*math.pi/5)*(1 if k%2==0 else 0.45)) for k in range(10)]
+    d.polygon(st,fill=(255,210,120))  # star night light
+    d.polygon([(BW-130,250),(BW,250),(BW,BH),(BW-190,BH)],fill=(5,5,7))  # door frame foreground
+    return noise_tex(im,7)
 SC={'title':title,'outside':outside,'phone':phone,'phone_red':lambda:phone(True),'cam_empty':lambda:cam(0),'cam_man':lambda:cam(1),'cam_man_close':lambda:cam(2),'dark':dark,'dark_red':lambda:dark(True),
     'building':building,'elev9':lambda:elevator(9),'elev13':lambda:elevator(13),'hall':lambda:hall(False),'hall_woman':lambda:hall(True),'room_woman':room,
     'cabin':cabin,'door':door,'prints':prints,'closet':lambda:closet(False),'closet_woman':lambda:closet(True),
     'road':road,'gps':gps,'gps_red':lambda:gps(True),'mirror':mirror,'mirror_eyes':lambda:mirror(True),
-    'farmhouse':farmhouse,'farmhouse_woman':lambda:farmhouse(True),'clipping':clipping}
+    'farmhouse':farmhouse,'farmhouse_woman':lambda:farmhouse(True),'clipping':clipping,
+    'monitor':monitor,'monitor_man':lambda:monitor('man'),'monitor_me':lambda:monitor('me'),'nursery':nursery}
 def caption(text):
     lay=Image.new('RGBA',(W,H),(0,0,0,0)); d=ImageDraw.Draw(lay); f=F(B,70)
     words=text.split(); lines=[]; cur=''
