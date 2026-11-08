@@ -1,30 +1,29 @@
 LINES = [
-    ("My GPS told me to turn left. There was no road there.", "gps", 0.3),
-    ("Just black trees, on a highway I drive every night.", "road", 0.2),
-    ("I kept driving. It said it again. Turn left.", "gps", 0.3),
-    ("Then the screen went red. New route: Home.", "gps_red", 0.3),
-    ("But it wasn't my address.", "road", 0.3),
-    ("At a red light, the car started ringing. Incoming call.", "phone", 0.3),
-    ("The caller I.D. said: Back seat.", "phone_red", 0.5),
-    ("I looked in the mirror. The seat was empty.", "mirror", 0.7),
-    ("Then the GPS spoke, in a woman's voice.", "gps_red", 0.4),
-    ("You missed the turn. Now we go my way.", "mirror_eyes", 0.8),
+    ("Three nights ago, my GPS found a road that wasn't there.", "gps_red", 0.3),
+    ("Tonight, I took the turn.", "road", 0.2),
+    ("Four miles of gravel. Then the road just ended.", "road", 0.3),
+    ("At an old farmhouse with one lit window.", "farmhouse", 0.3),
+    ("A woman stood in it, waving me inside.", "farmhouse_woman", 0.3),
+    ("I drove home and looked the house up.", "clipping", 0.3),
+    ("It burned down in 1987. She never left.", "clipping", 0.4),
+    ("Last night, my GPS turned on by itself.", "gps_red", 0.4),
+    ("The back seat smelled like smoke.", "mirror", 0.8),
+    ("Welcome home. Now you stay with me.", "mirror_eyes", 0.8),
 ]
 CAPTIONS = [
-    "My GPS told me to turn left. There was NO road there.",
-    "Just black trees... on a highway I drive every night.",
-    "I kept driving. It said it again. \"Turn left.\"",
-    "Then the screen went red. NEW ROUTE: HOME.",
-    "But it wasn't my address.",
-    "At a red light, the car started ringing. Incoming call.",
-    "The caller ID said... BACK SEAT.",
-    "I looked in the mirror. The seat was empty.",
-    "Then the GPS spoke... in a woman's voice.",
-    "\"You missed the turn. Now we go MY way.\"",
+    "Three nights ago, my GPS found a road that wasn't there.",
+    "Tonight... I took the turn.",
+    "Four miles of gravel. Then the road just ENDED.",
+    "At an old farmhouse with one lit window.",
+    "A woman stood in it... waving me inside.",
+    "I drove home and looked the house up.",
+    "It burned down in 1987. She never left.",
+    "Last night, my GPS turned on by itself.",
+    "The back seat smelled like smoke.",
+    "\"Welcome home. Now you stay with ME.\"",
 ]
 # Female (whisper) voice lines, matched exactly by text
-FEMALE = ("You missed the turn. Now we go my way.",)
-HOOK = "THERE WAS NO ROAD"
-TOPLABEL = "PART 1"
-ENDTEXT = ("FOLLOW FOR", "PART 2")
-LOCATION = ("ROUTE 9, VERMONT", "NOVEMBER 3, 2019")
+FEMALE = ("Welcome home. Now you stay with me.",)
+HOOK = "I TOOK THE TURN"
+TOPLABEL = "PART 2"
+LOCATION = ("ROUTE 9, VERMONT", "NOVEMBER 6, 2019")

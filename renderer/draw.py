@@ -21,6 +21,7 @@ from story import LINES, CAPTIONS
 W,H=1080,1920; BW,BH=int(W*1.12),int(H*1.12)
 B='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
 M='/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf'
+SERIFD='/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf'
 def F(p,s): return ImageFont.truetype(p,s)
 def base(c1,c2):
     g=np.linspace(0,1,BH)[:,None,None]; a=np.array(c1)*(1-g)+np.array(c2)*g
@@ -382,11 +383,78 @@ def mirror(eyes=False):  # rear-view mirror showing the back seat
     d=ImageDraw.Draw(im); d.line([180,600,330,1050],fill=(50,54,68),width=6)  # glare streak
     d.rectangle([0,1250,BW,BH],fill=(14,12,12)); d.polygon([(0,1250),(BW,1250),(BW,1300),(0,1300)],fill=(22,20,20))
     return noise_tex(im,7)
+def farmhouse(woman=False):  # dead end: old farmhouse in headlights, one lit window
+    im=base((5,8,20),(14,14,20)); d=ImageDraw.Draw(im); stars(d,110,800,21)
+    im=moon(im,860,360,58); d=ImageDraw.Draw(im)
+    for x in range(-40,BW+80,95): pine(d,x,1010,260+(x*29)%240,80,(6,9,10))
+    d.rectangle([0,1000,BW,BH],fill=(16,16,14))
+    d.polygon([(cx-60,1260),(cx+60,1260),(BW+200,BH),(-200,BH)],fill=(44,40,34))  # gravel road
+    for k in range(60):
+        x,y=_R.random()*BW,1270+_R.random()*(BH-1270); d.ellipse([x-3,y-2,x+3,y+2],fill=(70,64,54))
+    # farmhouse
+    d.rectangle([250,820,960,1260],fill=(46,44,42))
+    for y in range(840,1260,30): d.line([250,y,960,y],fill=(36,34,32),width=4)  # clapboard
+    d.polygon([(210,830),(cx,560),(1000,830)],fill=(24,22,22)); d.line([210,830,cx,560,1000,830],fill=(70,68,66),width=8)
+    d.rectangle([820,600,880,740],fill=(30,26,24))  # chimney
+    d.polygon([(560,700),(640,700),(620,760),(580,770)],fill=(18,16,16))  # broken attic window
+    for x in (330,770):  # dark boarded windows
+        d.rectangle([x,920,x+110,1060],fill=(14,14,16))
+        d.line([x-10,950,x+120,1020],fill=(60,48,36),width=14); d.line([x-10,1030,x+120,980],fill=(60,48,36),width=14)
+    d.rectangle([520,900,690,1080],fill=(170,110,50))  # the lit window
+    d.line([605,900,605,1080],fill=(50,36,24),width=10); d.line([520,990,690,990],fill=(50,36,24),width=10)
+    d.rectangle([505,885,705,900],fill=(60,56,52)); d.rectangle([505,1080,705,1094],fill=(60,56,52))
+    if woman:
+        d.ellipse([590,920,640,975],fill=(8,6,6)); d.polygon([(570,975),(660,975),(675,1080),(555,1080)],fill=(8,6,6))
+        d.polygon([(586,940),(574,1040),(594,1040)],fill=(8,6,6)); d.polygon([(644,940),(656,1040),(636,1040)],fill=(8,6,6))  # long hair
+        d.polygon([(655,990),(700,905),(712,912),(668,995)],fill=(8,6,6))  # waving arm
+        for f in range(4): d.line([706,906,700+f*7,885],fill=(8,6,6),width=5)
+        d.ellipse([601,940,611,946],fill=(240,230,210)); d.ellipse([619,940,629,946],fill=(240,230,210))
+    d.rectangle([250,1150,960,1170],fill=(34,30,28)); d.rectangle([240,1140,970,1152],fill=(60,56,52))  # porch
+    for x in (270,450,760,940): d.rectangle([x-8,1150,x+8,1260],fill=(56,52,48))
+    d.rectangle([380,1180,470,1260],fill=(20,18,18))  # front door ajar
+    d.line([300,1260,240,1300],fill=(30,28,26),width=6); d.line([860,1260,950,1310],fill=(30,28,26),width=6)
+    for x in range(40,250,40): d.line([x,1240,x,1300],fill=(40,36,30),width=6)  # broken fence
+    d.line([30,1255,250,1250],fill=(40,36,30),width=5)
+    d.line([1000,1250,1010,1110],fill=(40,36,30),width=6); d.rectangle([965,1110,1060,1150],fill=(60,50,40))  # mailbox
+    im=glow(im,(605,990),200,(200,130,60),0.28)
+    im=cone(im,(cx-260,BH),(220,1000),(700,1000),(200,190,150),0.13,40); im=cone(im,(cx+260,BH),(500,1000),(1000,1000),(200,190,150),0.13,40)
+    d=ImageDraw.Draw(im)
+    d.polygon([(0,1640),(BW,1640),(BW,BH),(0,BH)],fill=(8,8,9)); d.polygon([(0,1640),(170,0),(0,0)],fill=(6,6,7)); d.polygon([(BW,1640),(BW-170,0),(BW,0)],fill=(6,6,7))  # dashboard + pillars
+    d.arc([cx-540,1580,cx+540,2560],200,340,fill=(16,16,18),width=64)
+    pine(d,-30,1400,900,200,(3,4,5))
+    return noise_tex(im,7)
+def clipping():  # old newspaper clipping under a desk lamp
+    im=base((10,9,8),(16,13,10)); d=ImageDraw.Draw(im)
+    d.rectangle([0,0,BW,BH],fill=(30,22,16))
+    for y in range(0,BH,90): d.line([0,y+((y*7)%30),BW,y+((y*13)%30)],fill=(24,18,13),width=5)  # wood grain
+    d.rounded_rectangle([60,330,420,560],10,fill=(20,20,24)); d.rounded_rectangle([80,350,400,540],6,fill=(30,60,80))  # laptop corner
+    d.text((100,380),'COUNTY RECORDS',font=F(M,24),fill=(150,210,230))
+    for k in range(4): d.line([100,430+k*26,360-k*30,430+k*26],fill=(90,150,170),width=6)
+    d.polygon([(230,620),(930,580),(980,1440),(250,1480)],fill=(112,102,80))  # clipping
+    d.polygon([(930,580),(980,1440),(960,1450),(905,600)],fill=(84,76,58))
+    d.text((290,650),'FARMHOUSE FIRE',font=F(SERIFD,54),fill=(14,12,10))
+    d.text((300,730),'ON ROUTE 9',font=F(SERIFD,54),fill=(14,12,10))
+    d.text((305,815),'OCTOBER 31, 1987',font=F(M,28),fill=(36,30,24))
+    d.rectangle([310,870,890,1170],fill=(60,56,48))  # photo of burned house
+    d.rectangle([310,1050,890,1170],fill=(40,38,34))
+    d.polygon([(380,1050),(380,950),(470,890),(560,960),(560,1050)],fill=(20,18,16)); d.polygon([(620,1050),(640,930),(700,980),(760,920),(820,1050)],fill=(22,20,18))
+    for k in range(5): d.ellipse([480+k*40,890-k*8,540+k*48,930-k*8],fill=(90,86,78))
+    for k in range(8): d.line([320,1200+k*30,880-(k%3)*60,1196+k*30],fill=(60,54,42),width=8)
+    d.ellipse([300,1300,420,1420],outline=(170,30,25),width=6)  # red ink circle
+    d.text((316,1340),'1 MISSING',font=F(B,18),fill=(170,30,25))
+    d.line([150,1500,500,1580],fill=(170,30,25),width=10); d.polygon([(500,1580),(470,1560),(475,1595)],fill=(170,30,25))  # red pen
+    d.ellipse([880,1500,1060,1600],fill=(46,34,26)); d.ellipse([900,1515,1040,1585],fill=(24,14,10))  # coffee cup
+    d.rectangle([780,300,900,380],fill=(20,18,16)); d.polygon([(700,380),(980,380),(1050,520),(630,520)],fill=(36,32,28))  # lamp shade
+    im=glow(im,(600,1000),480,(170,110,50),0.22); im=cone(im,(840,500),(200,1500),(1100,1450),(200,150,80),0.12,50)
+    d=ImageDraw.Draw(im)
+    d.polygon([(0,BH),(0,1560),(200,1620),(320,BH)],fill=(8,6,5))  # foreground shadow
+    return noise_tex(im,7)
 # Scene library. Add new scene functions above and register them here.
 SC={'title':title,'outside':outside,'phone':phone,'phone_red':lambda:phone(True),'cam_empty':lambda:cam(0),'cam_man':lambda:cam(1),'cam_man_close':lambda:cam(2),'dark':dark,'dark_red':lambda:dark(True),
     'building':building,'elev9':lambda:elevator(9),'elev13':lambda:elevator(13),'hall':lambda:hall(False),'hall_woman':lambda:hall(True),'room_woman':room,
     'cabin':cabin,'door':door,'prints':prints,'closet':lambda:closet(False),'closet_woman':lambda:closet(True),
-    'road':road,'gps':gps,'gps_red':lambda:gps(True),'mirror':mirror,'mirror_eyes':lambda:mirror(True)}
+    'road':road,'gps':gps,'gps_red':lambda:gps(True),'mirror':mirror,'mirror_eyes':lambda:mirror(True),
+    'farmhouse':farmhouse,'farmhouse_woman':lambda:farmhouse(True),'clipping':clipping}
 def caption(text):
     lay=Image.new('RGBA',(W,H),(0,0,0,0)); d=ImageDraw.Draw(lay); f=F(B,70)
     words=text.split(); lines=[]; cur=''
