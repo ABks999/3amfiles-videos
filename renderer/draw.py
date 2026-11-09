@@ -525,12 +525,144 @@ def nursery():  # dark nursery, crib under the window, star night light
     d.polygon(st,fill=(255,210,120))  # star night light
     d.polygon([(BW-130,250),(BW,250),(BW,BH),(BW-190,BH)],fill=(5,5,7))  # door frame foreground
     return noise_tex(im,7)
+def _rain(d,n=160,seed=7,col=(70,80,100)):
+    r=np.random.default_rng(seed)
+    for _ in range(n):
+        x,y=r.random()*BW,r.random()*BH; l=r.random()*40+25; d.line([x,y,x-l*0.25,y+l],fill=col,width=2)
+def lighthouse():  # lighthouse on a rocky island in a storm, lamp burning, beams sweeping the sea
+    im=base((6,9,18),(12,16,24)); d=ImageDraw.Draw(im); stars(d,40,500,31)
+    im=moon(im,230,420,50,(190,196,210)); d=ImageDraw.Draw(im)
+    for k,(x,y,w,h) in enumerate(((-100,380,700,170),(420,300,900,200),(150,560,800,150),(700,520,700,180))):  # storm clouds
+        d.ellipse([x,y,x+w,y+h],fill=(16+k*2,20+k*2,30+k*2))
+    d.rectangle([0,1180,BW,BH],fill=(10,16,22)); vgrad(d,(0,1180,BW,1700),(18,26,34),(8,12,18))  # sea
+    for k in range(40):  # waves
+        y=1200+(k*37)%480; x=(k*173)%BW; w=60+(k*31)%120; d.arc([x-w,y-14,x+w,y+14],200,340,fill=(46,60,72),width=4)
+    d.polygon([(120,1260),(260,1110),(420,1080),(620,1050),(860,1090),(1010,1180),(1110,1290),(60,1300)],fill=(22,22,24))  # island rock
+    d.polygon([(260,1110),(420,1080),(520,1100),(380,1160)],fill=(34,34,36)); d.polygon([(860,1090),(1010,1180),(900,1170)],fill=(30,30,32))
+    for x in (180,1060): d.ellipse([x-90,1260,x+90,1310],fill=(120,135,145))  # surf foam
+    tx,tb,tt=640,1100,690  # tower centre x, base y, top y
+    d.polygon([(tx-110,tb),(tx+110,tb),(tx+70,tt),(tx-70,tt)],fill=(150,148,142))
+    d.polygon([(tx+20,tb),(tx+110,tb),(tx+70,tt),(tx+15,tt)],fill=(96,96,96))  # shaded side
+    for y0 in (700,900):  # red bands
+        f0=(y0-tt)/(tb-tt); f1=(y0+80-tt)/(tb-tt); w0=70+40*f0; w1=70+40*f1
+        d.polygon([(tx-w0,y0),(tx+w0,y0),(tx+w1,y0+80),(tx-w1,y0+80)],fill=(120,30,26))
+    for y in (760,960): d.rectangle([tx-12,y,tx+12,y+34],fill=(30,28,26))  # small tower windows
+    d.rectangle([tx-95,tt-14,tx+95,tt+6],fill=(26,26,28)); d.line([tx-100,tt-30,tx+100,tt-30],fill=(30,30,32),width=5)  # gallery + rail
+    for x in range(tx-96,tx+100,24): d.line([x,tt-30,x,tt-12],fill=(30,30,32),width=3)
+    d.rectangle([tx-58,tt-120,tx+58,tt-14],fill=(240,200,120))  # lantern room glass
+    for x in (tx-30,tx,tx+30): d.line([x,tt-120,x,tt-14],fill=(40,34,28),width=5)
+    d.polygon([(tx-70,tt-120),(tx+70,tt-120),(tx,tt-185)],fill=(30,30,32)); d.ellipse([tx-10,tt-200,tx+10,tt-180],fill=(30,30,32))  # roof
+    d.rectangle([800,1000,1000,1100],fill=(70,66,60)); d.polygon([(785,1005),(900,930),(1015,1005)],fill=(40,36,34))  # keeper's cottage
+    d.rectangle([840,1030,880,1070],fill=(14,14,16)); d.rectangle([930,1035,970,1100],fill=(26,22,20))  # dark window, door
+    im=glow(im,(tx,tt-70),260,(230,170,80),0.55)
+    im=cone(im,(tx,tt-70),(-200,tt-260),(-200,tt+160),(230,200,140),0.32,30)  # beam to the left
+    im=cone(im,(tx,tt-70),(BW+250,tt-40),(BW+250,tt+220),(230,200,140),0.18,40)
+    im=cone(im,(tx,tt-70),(200,1300),(700,1300),(200,170,110),0.06,60)
+    d=ImageDraw.Draw(im); _rain(d)
+    d.polygon([(0,BH),(0,1480),(160,1430),(330,1520),(520,1600),(560,BH)],fill=(5,6,7))  # foreground rocks
+    d.polygon([(BW,BH),(BW,1520),(1050,1500),(900,1620),(820,BH)],fill=(4,5,6))
+    for k in range(18): x=20+k*28; d.line([x,1500,x+((k%3)-1)*30,1380+(k*13)%60],fill=(8,10,9),width=4)  # dune grass
+    return noise_tex(im,8)
+def lh_stairs(mode=0):  # looking DOWN the spiral staircase of the lighthouse; mode 1/2 = figure far/close
+    im=base((10,10,12),(4,4,6)); d=ImageDraw.Draw(im)
+    ccx,ccy=cx+30,1080; n=13
+    for k in range(n):
+        r=640*0.80**k; s=1.0-k/n
+        wall=tuple(int(v*s) for v in (38,36,34)); step=tuple(int(v*s) for v in (66,60,52))
+        d.ellipse([ccx-r,ccy-r*0.92,ccx+r,ccy+r*0.92],fill=wall)
+        ri=r*0.86; d.ellipse([ccx-ri,ccy-ri*0.92,ccx+ri,ccy+ri*0.92],fill=step)  # stone step ring
+        for j in range(16):  # step edges
+            a=j*math.pi/8+k*0.35; d.line([ccx+ri*math.cos(a),ccy+ri*0.92*math.sin(a),ccx+r*0.80*math.cos(a)*0.8,ccy+r*0.80*0.92*math.sin(a)*0.8],fill=tuple(int(v*s) for v in (40,36,32)),width=max(1,int(5*s)))
+        rr=r*0.66; d.ellipse([ccx-rr,ccy-rr*0.92,ccx+rr,ccy+rr*0.92],outline=tuple(int(v*s) for v in (30,26,22)),width=max(2,int(10*s)))  # iron rail
+        for j in range(12):
+            a=j*math.pi/6+k*0.2; d.line([ccx+rr*math.cos(a),ccy+rr*0.92*math.sin(a),ccx+rr*0.94*math.cos(a),ccy+rr*0.92*0.94*math.sin(a)+16*s],fill=tuple(int(v*s) for v in (30,26,22)),width=max(1,int(4*s)))
+        rh=r*0.60; d.ellipse([ccx-rh,ccy-rh*0.92,ccx+rh,ccy+rh*0.92],fill=tuple(int(v*s*0.6) for v in (40,38,36)))
+    d.ellipse([ccx-34,ccy-30,ccx+34,ccy+30],fill=(0,0,0))  # bottomless centre
+    for k in range(3):  # small slit windows with moonlight
+        a=0.6+k*2.0; r=640*0.80**(k*2+1)*0.93
+        x,y=ccx+r*math.cos(a),ccy+r*0.92*math.sin(a); d.rectangle([x-10,y-24,x+10,y+24],fill=(70,90,120))
+        im=glow(im,(int(x),int(y)),60,(60,80,120),0.4); d=ImageDraw.Draw(im)
+    if mode==1:  # small figure far down, face turned up
+        x,y=ccx-150,ccy+70; d.ellipse([x-22,y-26,x+22,y+20],fill=(3,3,4)); d.ellipse([x-30,y+10,x+30,y+60],fill=(3,3,4))
+        d.polygon([(x+24,y+20),(x+90,y-30),(x+96,y-20),(x+30,y+34)],fill=(3,3,4))  # arm on the rail
+        d.ellipse([x-12,y-10,x-4,y-4],fill=(220,215,190)); d.ellipse([x+4,y-10,x+12,y-4],fill=(220,215,190))
+    if mode==2:  # tall thin figure one turn below, face tilted up at us, long arm sliding along the rail
+        x,y=ccx+160,ccy+300
+        d.polygon([(x-70,y+40),(x+70,y+40),(x+110,y+260),(x-110,y+260)],fill=(3,3,4))  # shoulders/body (foreshortened)
+        d.ellipse([x-55,y-75,x+55,y+55],fill=(3,3,4))  # head
+        d.polygon([(x-40,y-50),(x-75,y+90),(x-50,y+90)],fill=(3,3,4)); d.polygon([(x+40,y-50),(x+75,y+90),(x+50,y+90)],fill=(3,3,4))  # hair
+        d.polygon([(x-70,y+60),(x-300,y-40),(x-290,y-62),(x-60,y+30)],fill=(3,3,4))  # long arm on the rail
+        for f in range(4): d.line([x-295,y-50,x-335+f*8,y-80+f*12],fill=(3,3,4),width=7)
+        d.ellipse([x-32,y-24,x-10,y-10],fill=(240,232,200)); d.ellipse([x+10,y-24,x+32,y-10],fill=(240,232,200))
+        im=glow(im,(x,y-15),60,(150,30,25),0.3); d=ImageDraw.Draw(im)
+    im=cone(im,(cx-260,250),(ccx-420,1500),(ccx+260,1500),(220,190,130),0.10,50)  # our lantern light from above
+    im=glow(im,(cx-260,330),120,(230,170,80),0.5)
+    d=ImageDraw.Draw(im)
+    d.polygon([(0,0),(BW,0),(BW,250),(0,330)],fill=(6,6,7))  # landing edge foreground
+    d.line([0,330,BW,250],fill=(30,28,24),width=10)
+    d.polygon([(0,BH),(0,1560),(240,1640),(300,BH)],fill=(5,5,6)); d.polygon([(BW,BH),(BW,1580),(BW-200,1660),(BW-250,BH)],fill=(5,5,6))
+    return noise_tex(im,8)
+def lantern():  # lantern room at the top: huge glowing Fresnel lens, storm through the glass
+    im=base((8,10,16),(14,12,12)); d=ImageDraw.Draw(im)
+    vgrad(d,(0,300,BW,1250),(12,18,30),(18,24,32))  # night outside the glass
+    for k in range(30): y=1000+(k*29)%250; x=(k*211)%BW; d.arc([x-70,y-10,x+70,y+10],200,340,fill=(40,52,64),width=3)  # far sea
+    for x in range(0,BW+200,200): d.line([x,300,x-120,1250],fill=(22,20,20),width=16)  # diagonal astragals
+    d.line([0,780,BW,760],fill=(22,20,20),width=12)
+    d.rectangle([0,1250,BW,BH],fill=(26,22,20)); d.rectangle([0,1240,BW,1262],fill=(46,40,34))  # iron floor
+    for x in range(0,BW,90): d.line([x,1262,x-200,BH],fill=(20,18,16),width=4)
+    lx,ly=cx,860  # lens centre
+    d.rectangle([lx-70,1120,lx+70,1260],fill=(30,26,22)); d.polygon([(lx-130,1260),(lx+130,1260),(lx+90,1180),(lx-90,1180)],fill=(38,34,30))  # pedestal
+    im=glow(im,(lx,ly),460,(240,180,90),0.3); d=ImageDraw.Draw(im)
+    d.ellipse([lx-230,ly-300,lx+230,ly+300],fill=(150,105,50))  # beehive lens
+    for k in range(13):  # prism rings
+        y=ly-280+k*46; w=230*math.sqrt(max(0,1-((y-ly)/300)**2))
+        d.line([lx-w,y,lx+w,y],fill=(250,220,150),width=6); d.line([lx-w,y+14,lx+w,y+14],fill=(150,100,50),width=4)
+    d.ellipse([lx-60,ly-60,lx+60,ly+60],fill=(255,240,200)); im=glow(im,(lx,ly),130,(255,220,150),0.45)
+    im=cone(im,(lx,ly),(-300,ly-200),(-300,ly+260),(240,210,150),0.35,30); im=cone(im,(lx,ly),(BW+300,ly-150),(BW+300,ly+300),(240,210,150),0.22,40)
+    d=ImageDraw.Draw(im); _rain(d,90,9,(60,70,90))
+    d.rectangle([60,1380,330,1440],fill=(36,28,22)); d.rectangle([80,1440,110,1700],fill=(26,20,16))  # small desk edge
+    d.rounded_rectangle([120,1300,200,1380],10,fill=(40,34,28)); d.ellipse([140,1270,180,1310],fill=(70,60,40))  # oil can
+    d.polygon([(0,0),(150,0),(110,BH),(0,BH)],fill=(6,6,7)); d.polygon([(BW,0),(BW-120,0),(BW-90,BH),(BW,BH)],fill=(5,5,6))  # iron frame foreground
+    d.line([0,300,BW,300],fill=(10,10,11),width=30)
+    return noise_tex(im,8)
+def logbook(red=False):  # keeper's logbook open on a desk under an oil lamp; red = the new entry in fresh ink
+    im=base((12,10,8),(18,14,10)); d=ImageDraw.Draw(im)
+    d.rectangle([0,0,BW,BH],fill=(32,24,18))
+    for y in range(0,BH,80): d.line([0,y+((y*7)%25),BW,y+((y*11)%25)],fill=(26,19,14),width=5)  # wood grain
+    d.rectangle([780,330,1100,700],fill=(22,26,36)); d.line([940,330,940,700],fill=(10,10,12),width=10)  # porthole-ish window
+    im=moon(im,1010,420,30,(170,176,190)); d=ImageDraw.Draw(im)
+    d.polygon([(110,700),(cx,740),(cx,1400),(130,1440)],fill=(112,102,80)); d.polygon([(cx,740),(BW-110,700),(BW-130,1440),(cx,1400)],fill=(120,110,86))  # pages
+    d.line([cx,740,cx,1400],fill=(90,80,60),width=8)
+    d.polygon([(110,700),(130,1440),(110,1460),(90,710)],fill=(60,30,20)); d.polygon([(BW-110,700),(BW-130,1440),(BW-110,1460),(BW-90,710)],fill=(60,30,20))  # cover
+    fh=F(SERIFD,30); fs=F(M,24)
+    for k,(dt,txt) in enumerate((('OCT 29 1952','Wind NE. Lamp lit 5:02.'),('OCT 30 1952','Heard steps again.'),('OCT 31 1952','It is on the stairs.'))):
+        y=800+k*170; d.text((170,y),dt,font=fs,fill=(50,40,30)); d.text((170,y+40),txt,font=F(SERIFD,26),fill=(40,32,24))
+        d.line([170,y+90,520,y+92],fill=(120,110,88),width=2)
+    for k in range(8): d.line([cx+50,790+k*70,BW-160,792+k*70],fill=(130,120,95),width=2)  # ruled lines right page
+    d.text((cx+60,800),'NOV 2 2016',font=fs,fill=(120,20,16) if red else (50,40,30))
+    if red:
+        ink=(150,18,14)
+        for k,ln in enumerate(('The new','keeper is','coming up.')): d.text((cx+60,860+k*70),ln,font=F(SERIFD,44),fill=ink)
+        for x in (cx+120,cx+300,cx+210): d.line([x,1060,x+2,1060+(x%5)*18+40],fill=ink,width=5)  # wet ink running
+    else:
+        for k in range(3): d.line([cx+60,880+k*70,cx+300-k*40,878+k*70],fill=(70,30,24),width=6)  # scribbled lines
+    d.line([cx+250,1250,BW-60,1520],fill=(20,16,12),width=14); d.polygon([(cx+250,1250),(cx+275,1270),(cx+240,1235)],fill=(40,40,44))  # fountain pen
+    d.rectangle([120,300,260,330],fill=(40,30,22)); d.ellipse([140,340,240,480],fill=(200,150,70))  # oil lamp
+    d.polygon([(150,330),(230,330),(250,520),(130,520)],fill=(120,90,50)); d.rectangle([120,520,260,560],fill=(50,38,28))
+    im=glow(im,(190,420),300,(230,150,60) if not red else (220,90,50),0.3)
+    im=cone(im,(190,420),(100,1500),(1000,1450),(210,150,80),0.07,60)
+    if red: im=glow(im,(cx+200,950),260,(140,10,10),0.35)
+    d=ImageDraw.Draw(im)
+    d.polygon([(0,BH),(0,1560),(260,1620),(360,BH)],fill=(8,6,5)); d.polygon([(BW,BH),(BW,1600),(BW-180,1660),(BW-240,BH)],fill=(8,6,5))
+    return noise_tex(im,7)
 SC={'title':title,'outside':outside,'phone':phone,'phone_red':lambda:phone(True),'cam_empty':lambda:cam(0),'cam_man':lambda:cam(1),'cam_man_close':lambda:cam(2),'dark':dark,'dark_red':lambda:dark(True),
     'building':building,'elev9':lambda:elevator(9),'elev13':lambda:elevator(13),'hall':lambda:hall(False),'hall_woman':lambda:hall(True),'room_woman':room,
     'cabin':cabin,'door':door,'prints':prints,'closet':lambda:closet(False),'closet_woman':lambda:closet(True),
     'road':road,'gps':gps,'gps_red':lambda:gps(True),'mirror':mirror,'mirror_eyes':lambda:mirror(True),
     'farmhouse':farmhouse,'farmhouse_woman':lambda:farmhouse(True),'clipping':clipping,
-    'monitor':monitor,'monitor_man':lambda:monitor('man'),'monitor_me':lambda:monitor('me'),'nursery':nursery}
+    'monitor':monitor,'monitor_man':lambda:monitor('man'),'monitor_me':lambda:monitor('me'),'nursery':nursery,
+    'lighthouse':lighthouse,'lantern':lantern,'lh_stairs':lambda:lh_stairs(0),'lh_stairs_man':lambda:lh_stairs(1),'lh_stairs_close':lambda:lh_stairs(2),
+    'logbook':logbook,'logbook_red':lambda:logbook(True)}
 def caption(text):
     lay=Image.new('RGBA',(W,H),(0,0,0,0)); d=ImageDraw.Draw(lay); f=F(B,70)
     words=text.split(); lines=[]; cur=''

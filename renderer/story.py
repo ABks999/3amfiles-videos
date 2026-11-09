@@ -1,29 +1,30 @@
 LINES = [
-    ("At 2:47 AM, the baby monitor started humming a lullaby.", "monitor", 0.3),
-    ("I was babysitting. The parents were at a wedding.", "hall", 0.2),
-    ("I ran upstairs. The baby was asleep. Alone.", "nursery", 0.3),
-    ("Back on the couch, the humming started again.", "monitor", 0.3),
-    ("On the screen, something was rocking the crib.", "monitor_man", 0.3),
-    ("I called the mother. My hands were shaking.", "phone", 0.2),
-    ("She was quiet for a long time.", "phone", 0.8),
-    ("Honey, we never bought a baby monitor.", "phone_red", 0.4),
-    ("I looked at the screen again.", "monitor_man", 0.3),
-    ("It wasn't showing the nursery anymore. It was showing me.", "monitor_me", 0.8),
+    ("At 3:10 AM, the lighthouse turned itself on.", "lighthouse", 0.3),
+    ("I'm the only keeper on Gull Rock. That lamp died in 1952.", "lighthouse", 0.2),
+    ("I climbed all one hundred and twelve steps.", "lh_stairs", 0.2),
+    ("The lamp was turning. Nobody was there.", "lantern", 0.3),
+    ("But the old keeper's logbook was open on the desk.", "logbook", 0.2),
+    ("The last entry was dated tonight. The ink was still wet.", "logbook", 0.3),
+    ("The new keeper is coming up.", "logbook_red", 0.4),
+    ("Then I heard footsteps on the stairs below me.", "dark", 0.3),
+    ("Something was climbing. Slowly.", "lh_stairs_man", 0.8),
+    ("It was counting the steps out loud. It had reached one hundred and eleven.", "lh_stairs_close", 0.8),
 ]
 CAPTIONS = [
-    "At 2:47 AM, the baby monitor started humming a lullaby.",
-    "I was babysitting. The parents were at a wedding.",
-    "I ran upstairs. The baby was asleep. ALONE.",
-    "Back on the couch... the humming started again.",
-    "On the screen, something was ROCKING the crib.",
-    "I called the mother. My hands were shaking.",
-    "She was quiet for a long time.",
-    "\"Honey... we never bought a baby monitor.\"",
-    "I looked at the screen again.",
-    "It wasn't showing the nursery anymore. It was showing ME.",
+    "At 3:10 AM, the lighthouse turned itself on.",
+    "I'm the only keeper on Gull Rock. That lamp died in 1952.",
+    "I climbed all 112 steps.",
+    "The lamp was turning. Nobody was there.",
+    "But the old keeper's logbook was open on the desk.",
+    "The last entry was dated TONIGHT. The ink was still wet.",
+    "\"The new keeper is coming up.\"",
+    "Then I heard footsteps on the stairs below me.",
+    "Something was climbing. Slowly.",
+    "It was counting the steps out loud. It had reached 111.",
 ]
 # Female (whisper) voice lines, matched exactly by text
-FEMALE = ("Honey, we never bought a baby monitor.",)
-HOOK = "IT WAS HUMMING"
-TOPLABEL = ""
-LOCATION = ("CEDAR FALLS, IOWA", "MARCH 3, 2018")
+FEMALE = ("The new keeper is coming up.",)
+HOOK = "SOMEONE LIT IT"
+TOPLABEL = "PART 1"
+ENDTEXT = ("FOLLOW FOR", "PART 2")
+LOCATION = ("GULL ROCK, MAINE", "NOVEMBER 2, 2016")
