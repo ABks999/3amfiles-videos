@@ -82,7 +82,7 @@ def music(total):
         s = thump(42, 0.3, 10, 0)*0.6; i = int(beat_t*SR); pulse[i:i+len(s)] += s[:max(0, min(len(s), n-i))]
         beat_t += 1.1-0.5*(beat_t/total)
     y = (pad*0.22*(0.6+0.6*prog) + high + pulse*0.5)
-    y *= np.minimum(1, t/1.5)
+    y *= np.minimum(1, t/0.15)  # no slow fade-in: the first second must already feel tense
     return y.astype(np.float32)
 
 KEYS = [(('knock',), knock), (('ring', 'call', 'phone'), ring), (('creak', 'door'), creak),
@@ -108,6 +108,8 @@ def build(lines, times, speech, total, out='sfx.wav'):
     if N >= 3: put(heartbeat(5, 95), speech[N-3][0], 0.8)
     put(riser(min(2.0, max(0.8, twist-speech[N-2][0]))), twist-min(2.0, max(0.8, twist-speech[N-2][0])), 0.5)
     put(impact(), twist-0.05, 0.9)
+    put(impact()[:int(1.2*SR)]*np.linspace(1, 0, int(1.2*SR)).astype(np.float32), 0.0, 0.7)  # opening hit on frame 1
+    put(whoosh(0.3)[::-1].copy(), 0.0, 0.4)
     mix = mix/max(1e-6, np.abs(mix).max())*0.85
     sf.write(out, mix, SR)
     return out

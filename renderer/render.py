@@ -1,11 +1,38 @@
+# ===================== GROWTH RULES v2 (Hamza approved, 10 Nov 2026) =====================
+# YouTube data after the first 7 Shorts: only 19% of viewers "stayed to watch", 81% swiped away in the
+# first second. These rules OVERRIDE any older line/word counts in the task prompt:
+# - LINE 1 IS A COLD OPEN: the single most shocking concrete fact of the story, max ~9 words, said as if
+#   it is happening now. No time stamp or scene-setting first. Good: "There's a man standing in my baby's
+#   nursery." / "Something is climbing my stairs. It's counting." Bad: "At 3:10 AM, the lighthouse turned on."
+#   The documentary details (exact time, place) come in line 2-3 ("It started at 2:47 AM...").
+# - Part 2: line 1 recaps the cliffhanger as a cold open ("It was on step 111. I was on 112.").
+# - 8-10 lines, 60-80 words, target 25-32 seconds. Every line must add new information; cut filler.
+# - HOOK: 2-4 words, a threat or a question, e.g. "DON'T LOOK UP", "WHO LIT IT?". Max ~14 characters
+#   so it fits on ONE line.
+# - Pauses: 0.15-0.3 s (tts.py caps them at 0.3, and 0.6 before the twist). Voice is sped up 12%.
+# - The first scene must show the scary thing or a strong, readable image (a figure, eyes, a door ajar),
+#   not an empty establishing shot.
+# - MAKE THEM HOOKED (Hamza, 10 Nov): every story needs an OPEN LOOP the viewer must see closed.
+#   * Relatable setting the viewer knows (their phone, Uber, babysitting, Ring doorbell, group chat,
+#     night shift, hotel room, Airbnb, school bus, smart speaker) beats exotic places.
+#   * One clear impossible detail early ("The text came from my own number.") and a question in the
+#     viewer's head by line 2 that only the last line answers.
+#   * Escalate every line: each line must be scarier or stranger than the last. No calm middle.
+#   * Rule-based / instruction hooks work well: "If your Alexa ever whispers your name, don't answer."
+#   * The twist must re-frame everything in one short line (max ~10 words) and land on the last word.
+#   * Use "you" sometimes (second person) so the viewer feels it is happening to them.
+#   * Make loops when possible: last line ends mid-thought that the first line completes.
+# - render.py now: punch-in + flash + shake on the first frame, opening sound hit, brand name and
+#   location stamp only appear after the first line, so the first second is just image + hook + caption.
+# ==========================================================================================
 # ===================== STORY + LOOK STYLE (documentary style, inspired by channels like Fern) =====================
 # Hamza wants the channel to feel like a cinematic documentary, not a cheap jump-scare video:
 # - Narration: calm, precise, documentary tone. Concrete details (exact times, places, objects, numbers).
-#   Example opening: "At 3:12 AM, a night nurse in Duluth heard her name over the intercom." Dread builds slowly,
+#   (The OPENING follows GROWTH RULES v2 above: line 1 is a cold open, exact time/place come in line 2-3.) Dread builds fast,
 #   short factual sentences, then a quiet but chilling twist. Stories stay FICTIONAL: never claim it is a true
 #   story, never use real people or real crimes.
 # - story.py may set LOCATION = ("DULUTH, MINNESOTA", "OCTOBER 14, 2019") (fictional details are fine): it is typed
-#   out like a case file (lower left, above the captions) during the first seconds. Use it in almost every episode.
+#   out like a case file (lower left, above the captions) when line 2 starts. Use it in almost every episode.
 # - The HOOK is shown in a clean serif title style. Keep it short and intriguing.
 # - Look: desaturated filmic grade, soft halation, heavy grain, slow smooth camera moves, dips to black between
 #   lines, subtle red pulse + push-in on the twist. No cartoon colours.
@@ -72,11 +99,13 @@ def brand_layer():
         d.text((W//2,200),TOPLABEL,font=F(B,44),fill=(255,255,255),anchor='mm')
     return lay
 def hook_layer(text):
-    lay=Image.new('RGBA',(W,H),(0,0,0,0)); d=ImageDraw.Draw(lay); f=F(SERIF,86)
+    lay=Image.new('RGBA',(W,H),(0,0,0,0)); d=ImageDraw.Draw(lay); f=F(SERIF,96)
+    for sz in (96,90,84,78):  # prefer ONE big line: shrink a little before wrapping
+        if d.textlength(text,font=F(SERIF,sz))<=980: f=F(SERIF,sz); break
     words=text.split(); lines=[]; cur=''
     for w in words:
         t=(cur+' '+w).strip()
-        if d.textlength(t,font=f)>940 and cur: lines.append(cur); cur=w
+        if d.textlength(t,font=f)>980 and cur: lines.append(cur); cur=w
         else: cur=t
     lines.append(cur); y=340
     sh=Image.new('RGBA',(W,H),(0,0,0,0)); sd=ImageDraw.Draw(sh)
@@ -94,10 +123,17 @@ def end_layer():
     d.text((W//2,1735),ENDTEXT[1],font=F(B,70),fill=(225,40,30),anchor='mm',stroke_width=8,stroke_fill=(0,0,0))
     return lay
 BRAND=brand_layer(); HOOKL=hook_layer(HOOK) if HOOK else None
+_s=TOPLABEL; TOPLABEL=''; BRAND0=None
+if _s:  # first line: only the PART label, no channel name (less clutter in the first second)
+    BRAND0=Image.new('RGBA',(W,H),(0,0,0,0)); _d=ImageDraw.Draw(BRAND0)
+    _d.rounded_rectangle([W//2-130,165,W//2+130,235],18,fill=(200,30,25,230)); _d.text((W//2,200),_s,font=F(B,44),fill=(255,255,255),anchor='mm')
+TOPLABEL=_s
+LOC0=times[1][0] if len(times)>1 else 0.0  # location stamp starts with line 2
 MF=F(M,40); _lc={}
 def location_layer(t):
     """case-file style place/date, typed out during the first seconds."""
-    if not LOCATION or t>6.0: return None
+    t=t-LOC0
+    if not LOCATION or t<0 or t>6.0: return None
     full='\n'.join(LOCATION); n=min(len(full),int(t*28)); cur='_' if int(t*3)%2==0 and n<len(full) or t<4.5 and int(t*3)%2==0 else ''
     alpha=1.0 if t<5.2 else max(0.0,(6.0-t)/0.8); key=(n,cur,round(alpha,1))
     if key not in _lc:
@@ -153,9 +189,11 @@ def frame(scene,cap_img,tg,ti,first,dur=2.5,twist=False):
     e=p*p*(3-2*p)  # ease in-out
     z=(1.0 if n%2==0 else 1.06)+0.08*e
     if twist and ti<0.6: z+=0.22*(1-ti/0.6)**2
+    if first and ti<0.5: z+=0.25*(1-ti/0.5)**2   # opening punch-in
     dirs=[(1,0),(-1,0),(0,1),(0,-1)]; dx,dy=dirs[n%4]
     sx=math.sin(tg*0.5)*5; sy=math.cos(tg*0.4)*4
     if twist and ti<0.6: amp=14*(1-ti/0.6); sx+=random.uniform(-amp,amp); sy+=random.uniform(-amp,amp)
+    if first and ti<0.4: amp=12*(1-ti/0.4); sx+=random.uniform(-amp,amp); sy+=random.uniform(-amp,amp)
     cw,ch=int(W/z),int(H/z); room_x=(BW-cw)//2; room_y=(BH-ch)//2
     x0=int(room_x+dx*(e-0.5)*room_x*0.8+sx); y0=int(room_y+dy*(e-0.5)*room_y*0.8+sy)
     x0=max(0,min(BW-cw,x0)); y0=max(0,min(BH-ch,y0))
@@ -166,6 +204,7 @@ def frame(scene,cap_img,tg,ti,first,dur=2.5,twist=False):
     fl=0.9 if random.random()<0.02 else 1.0  # rare light flicker
     a*=fl
     if ti<0.18 and n>0: a=a*(ti/0.18)  # dip from black between lines
+    if first and ti<0.1: a=a+120*(1-ti/0.1)  # white flash on the very first frames
     if dur-ti<0.1 and not twist: a=a*max(0.0,(dur-ti)/0.1)
     if twist: r=max(0.0,1-ti/1.2); a[...,0]+=60*r; a[...,1]*=1-0.35*r; a[...,2]*=1-0.35*r  # slow red pulse
     glitch=(twist and ti<0.25)
@@ -178,7 +217,9 @@ def frame(scene,cap_img,tg,ti,first,dur=2.5,twist=False):
         x=(PX[k]+math.sin(tg*0.5+k)*30)%W; y=(PY[k]-tg*PV[k]*0.6)%H; r=PS[k]
         d.ellipse([x-r,y-r,x+r,y+r],fill=(225,220,210,int(80*PA[k])))
     im.alpha_composite(dl)
-    im.alpha_composite(BRAND)
+    if first: 
+        if BRAND0 is not None: im.alpha_composite(BRAND0)
+    else: im.alpha_composite(BRAND)
     if first and HOOKL is not None:
         if ti<0.15:  # hook pops in
             sc=1.25-0.25*ti/0.15; hl=HOOKL.resize((int(W*sc),int(H*sc))); ox=(hl.width-W)//2; oy=int(330*sc-330)

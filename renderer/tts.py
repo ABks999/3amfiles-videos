@@ -49,9 +49,22 @@ if clips is None: clips = kokoro_lines()
 print('voice engine:', engine)
 open('engine.txt', 'w').write(engine)
 
+# Faster, tighter delivery (Hamza, 10 Nov 2026: 81% swiped away, so pace matters):
+# speed every clip up (pitch-preserving), start talking almost at once, cap the pauses.
+TEMPO = float(CFG.get('tempo', 1.12))
+def speed(a, f):
+    if abs(f-1.0) < 0.01: return a
+    out = subprocess.run(['ffmpeg', '-loglevel', 'error', '-f', 'f32le', '-ar', str(sr_out), '-ac', '1', '-i', '-',
+                          '-filter:a', f'atempo={f}', '-f', 'f32le', '-ac', '1', '-ar', str(sr_out), '-'],
+                         input=a.astype(np.float32).tobytes(), capture_output=True, check=True).stdout
+    return np.frombuffer(out, dtype=np.float32).copy()
+clips = [speed(a, 1.04 if LINES[i][0] in FEMALE else TEMPO) for i, a in enumerate(clips)]
+N = len(LINES)
+def cap(i, p): return min(p, 0.6) if i == N-2 else min(p, 0.3)
 parts = []; times = []; speech = []; t = 0.0
-lead = np.zeros(int(0.3*sr_out), dtype=np.float32); parts.append(lead); t += 0.3
-for (text, scene, pause), a in zip(LINES, clips):
+lead = np.zeros(int(0.05*sr_out), dtype=np.float32); parts.append(lead); t += 0.05
+for i, ((text, scene, pause), a) in enumerate(zip(LINES, clips)):
+    pause = cap(i, pause)
     start = t; parts.append(a); t += len(a)/sr_out
     speech.append([start, t])
     parts.append(np.zeros(int(pause*sr_out), dtype=np.float32)); t += pause
