@@ -625,7 +625,7 @@ def lantern():  # lantern room at the top: huge glowing Fresnel lens, storm thro
     d.polygon([(0,0),(150,0),(110,BH),(0,BH)],fill=(6,6,7)); d.polygon([(BW,0),(BW-120,0),(BW-90,BH),(BW,BH)],fill=(5,5,6))  # iron frame foreground
     d.line([0,300,BW,300],fill=(10,10,11),width=30)
     return noise_tex(im,8)
-def logbook(red=False):  # keeper's logbook open on a desk under an oil lamp; red = the new entry in fresh ink
+def logbook(red=False,entry=('The new','keeper is','coming up.')):  # keeper's logbook open on a desk under an oil lamp; red = the new entry in fresh ink
     im=base((12,10,8),(18,14,10)); d=ImageDraw.Draw(im)
     d.rectangle([0,0,BW,BH],fill=(32,24,18))
     for y in range(0,BH,80): d.line([0,y+((y*7)%25),BW,y+((y*11)%25)],fill=(26,19,14),width=5)  # wood grain
@@ -642,7 +642,7 @@ def logbook(red=False):  # keeper's logbook open on a desk under an oil lamp; re
     d.text((cx+60,800),'NOV 2 2016',font=fs,fill=(120,20,16) if red else (50,40,30))
     if red:
         ink=(150,18,14)
-        for k,ln in enumerate(('The new','keeper is','coming up.')): d.text((cx+60,860+k*70),ln,font=F(SERIFD,44),fill=ink)
+        for k,ln in enumerate(entry): d.text((cx+60,860+k*70),ln,font=F(SERIFD,44),fill=ink)
         for x in (cx+120,cx+300,cx+210): d.line([x,1060,x+2,1060+(x%5)*18+40],fill=ink,width=5)  # wet ink running
     else:
         for k in range(3): d.line([cx+60,880+k*70,cx+300-k*40,878+k*70],fill=(70,30,24),width=6)  # scribbled lines
@@ -655,6 +655,75 @@ def logbook(red=False):  # keeper's logbook open on a desk under an oil lamp; re
     d=ImageDraw.Draw(im)
     d.polygon([(0,BH),(0,1560),(260,1620),(360,BH)],fill=(8,6,5)); d.polygon([(BW,BH),(BW,1600),(BW-180,1660),(BW-240,BH)],fill=(8,6,5))
     return noise_tex(im,7)
+def lh_door(open_=False):  # top of the lighthouse: heavy iron door in the curved stone wall; open = empty stairs + wet footprints going down
+    im=base((14,12,12),(8,8,10)); d=ImageDraw.Draw(im)
+    for r in range(0,BH,70):  # curved stone wall blocks
+        off=35 if (r//70)%2 else 0
+        for x in range(-off,BW,140): d.rectangle([x+3,r+3,x+137,r+67],fill=(44+(x*7+r)%14,40+(x*5+r)%12,38+(x*3)%10))
+    for (x,y,l) in ((140,520,180),(900,700,140),(820,1180,160)): d.line([x,y,x+l*0.4,y+l*0.5,x+l*0.2,y+l],fill=(22,20,20),width=4)  # cracks
+    dx0,dy0,dx1,dy1=330,520,800,1420  # door frame
+    d.rectangle([dx0-40,dy0-40,dx1+40,dy1],fill=(28,26,26)); d.pieslice([dx0-40,dy0-200,dx1+40,dy0+120],180,360,fill=(28,26,26))
+    if open_:
+        d.rectangle([dx0,dy0,dx1,dy1],fill=(6,6,8)); d.pieslice([dx0,dy0-160,dx1,dy0+80],180,360,fill=(6,6,8))
+        for k in range(7):  # spiral steps going down into darkness
+            s=1-k/7; y=dy1-40-k*95; xl=dx0+30+k*25; xr=dx1-30-k*60
+            d.polygon([(xl,y),(xr,y-25),(xr,y+10),(xl,y+40)],fill=tuple(int(v*s) for v in (70,64,56)))
+            d.line([xl,y,xr,y-25],fill=tuple(int(v*s) for v in (110,100,85)),width=3)
+        d.line([dx1-60,dy1,dx1-160,dy0+60],fill=(30,26,22),width=10)  # iron rail
+        d.polygon([(dx1,dy0-40),(dx1+200,dy0+20),(dx1+200,dy1+60),(dx1,dy1)],fill=(52,44,40))  # door swung open
+        for y in range(dy0+60,dy1,110): d.ellipse([dx1+90,y,dx1+110,y+20],fill=(80,70,62))
+        im=glow(im,(dx0+220,dy0+300),150,(30,40,70),0.4); d=ImageDraw.Draw(im)
+    else:
+        d.rectangle([dx0,dy0,dx1,dy1],fill=(54,46,42)); d.pieslice([dx0,dy0-160,dx1,dy0+80],180,360,fill=(54,46,42))
+        for y in (dy0+40,dy0+420,dy1-120): d.rectangle([dx0,y,dx1,y+46],fill=(36,30,28))  # iron straps
+        for y in (dy0+40,dy0+420,dy1-120):
+            for x in range(dx0+30,dx1,60): d.ellipse([x-7,y+16,x+7,y+30],fill=(90,80,70))  # rivets
+        d.ellipse([dx1-120,950,dx1-40,1030],outline=(110,96,70),width=12)  # ring handle
+        d.rectangle([dx1-90,1060,dx1-70,1100],fill=(4,4,4)); im=glow(im,(dx1-80,1080),40,(160,190,230),0.6)  # keyhole, pale light
+        im=glow(im,(cx,dy1-5),200,(80,100,140),0.25)  # cold light under the door
+        d=ImageDraw.Draw(im); d.rectangle([dx0,dy1-6,dx1,dy1],fill=(140,160,190))
+    d=ImageDraw.Draw(im)
+    d.rectangle([0,dy1,BW,BH],fill=(26,22,20)); d.rectangle([0,dy1,BW,dy1+18],fill=(46,40,34))  # iron floor
+    for x in range(0,BW+300,110): d.line([x,dy1+18,x-260,BH],fill=(18,16,14),width=4)
+    if open_:  # wet footprints from the lamp room through the door, going down
+        for k,(x,y) in enumerate(((cx+60,1690),(cx-40,1610),(cx+40,1540),(cx-30,1480),(cx+20,1435))):
+            w=46-k*5; d.ellipse([x-w*0.5,y-w,x+w*0.5,y+w*0.4],fill=(70,82,96)); d.ellipse([x-w*0.4,y+w*0.5,x+w*0.4,y+w*1.0],fill=(70,82,96))
+            d.ellipse([x-w*0.3,y-w*0.8,x,y-w*0.2],fill=(120,135,150))
+    im=glow(im,(BW-60,600),360,(240,170,80),0.45)  # the great lens behind us (right)
+    im=cone(im,(BW,620),(dx0,dy1+200),(dx1+300,dy1+300),(230,170,90),0.12,60)
+    d=ImageDraw.Draw(im)
+    d.rectangle([60,1280,230,1300],fill=(40,30,22)); d.ellipse([100,1180,190,1290],fill=(180,130,60)); im=glow(im,(145,1235),110,(230,150,60),0.4); d=ImageDraw.Draw(im)  # oil lamp on a ledge
+    for k in range(5): d.arc([860+k*6,1300-k*16,1010-k*6,1360-k*16],0,360,fill=(70,56,36),width=8)  # coiled rope
+    d.rectangle([110,640,250,720],fill=(70,62,44)); d.text((125,660),'NO. 112',font=F(M,30),fill=(30,24,18))  # brass plaque
+    d.polygon([(0,0),(170,0),(130,BH),(0,BH)],fill=(6,6,7)); d.polygon([(BW,0),(BW-110,0),(BW-80,BH),(BW,BH)],fill=(5,5,6))  # iron frame foreground
+    return noise_tex(im,8)
+def dock_boat():  # stone jetty at night, cut mooring rope, my rowboat drifting out with a woman rowing it, lighthouse far behind
+    im=base((6,9,18),(12,16,24)); d=ImageDraw.Draw(im); stars(d,60,600,41)
+    im=moon(im,820,420,55,(195,200,214)); d=ImageDraw.Draw(im)
+    for k,(x,y,w,h) in enumerate(((-150,520,700,140),(500,600,800,130))): d.ellipse([x,y,x+w,y+h],fill=(16+k*3,20+k*3,30+k*3))
+    hy=900; d.rectangle([0,hy,BW,BH],fill=(10,16,22)); vgrad(d,(0,hy,BW,1500),(22,30,40),(8,12,18))
+    d.polygon([(760,hy),(880,hy),(1000,1500),(640,1500)],fill=(30,40,52))  # moon path on the water
+    for k in range(50): y=hy+15+(k*29)%600; x=(k*173)%BW; w=40+(k*31)%110; d.arc([x-w,y-10,x+w,y+10],200,340,fill=(52,66,80),width=3)
+    lx=170; d.polygon([(lx-28,hy),(lx+28,hy),(lx+16,hy-230),(lx-16,hy-230)],fill=(120,118,112)); d.rectangle([lx-22,hy-280,lx+22,hy-230],fill=(250,210,130))  # distant lighthouse
+    d.polygon([(lx-30,hy-280),(lx+30,hy-280),(lx,hy-315)],fill=(30,30,32)); d.polygon([(0,hy+10),(80,hy-20),(300,hy-10),(380,hy+12)],fill=(18,18,20))
+    im=glow(im,(lx,hy-255),140,(240,180,90),0.6); im=cone(im,(lx,hy-255),(BW+200,hy-420),(BW+200,hy-200),(230,200,140),0.22,30)
+    d=ImageDraw.Draw(im)
+    bx,by=860,1150  # rowboat out on the water, on the moon path
+    d.polygon([(bx-170,by),(bx+170,by),(bx+130,by+50),(bx-140,by+50)],fill=(40,30,24)); d.line([bx-170,by,bx+170,by],fill=(90,70,50),width=6)
+    d.ellipse([bx-200,by+40,bx+200,by+70],fill=(50,64,78))  # wake
+    figure(d,bx-10,by+6,230,(4,4,6),tilt=0.6,long_arms=False)
+    d.polygon([(bx-25,by-215),(bx-62,by-80),(bx-32,by-100)],fill=(4,4,6)); d.polygon([(bx+20,by-215),(bx+48,by-90),(bx+22,by-100)],fill=(4,4,6))  # long hair
+    d.line([bx-40,by-100,bx-230,by+60],fill=(14,12,10),width=8); d.line([bx+30,by-100,bx+200,by+60],fill=(14,12,10),width=8)  # oars
+    d.ellipse([bx-14,by-196,bx-4,by-188],fill=(225,220,200)); d.ellipse([bx+10,by-196,bx+20,by-188],fill=(225,220,200))  # pale eyes looking back
+    d.polygon([(0,1360),(560,1290),(620,1330),(640,BH),(0,BH)],fill=(36,34,32))  # stone jetty foreground
+    for x in range(0,600,90): d.line([x,1360-x*0.12,x+30,BH],fill=(24,22,20),width=4)
+    d.polygon([(0,1360),(560,1290),(570,1310),(0,1385)],fill=(60,58,54))
+    d.rectangle([470,1180,540,1330],fill=(26,22,20)); d.ellipse([465,1165,545,1195],fill=(40,34,30))  # mooring post
+    d.line([505,1230,560,1290,600,1360,640,1400],fill=(80,64,44),width=7); d.line([640,1400,660,1420],fill=(110,90,60),width=4)  # cut rope trailing in the water
+    d=ImageDraw.Draw(im); _rain(d,90,13)
+    d.polygon([(BW,BH),(BW,1450),(980,1500),(860,BH)],fill=(5,6,7))  # foreground rock right
+    return noise_tex(im,8)
+
 SC={'title':title,'outside':outside,'phone':phone,'phone_red':lambda:phone(True),'cam_empty':lambda:cam(0),'cam_man':lambda:cam(1),'cam_man_close':lambda:cam(2),'dark':dark,'dark_red':lambda:dark(True),
     'building':building,'elev9':lambda:elevator(9),'elev13':lambda:elevator(13),'hall':lambda:hall(False),'hall_woman':lambda:hall(True),'room_woman':room,
     'cabin':cabin,'door':door,'prints':prints,'closet':lambda:closet(False),'closet_woman':lambda:closet(True),
@@ -662,7 +731,8 @@ SC={'title':title,'outside':outside,'phone':phone,'phone_red':lambda:phone(True)
     'farmhouse':farmhouse,'farmhouse_woman':lambda:farmhouse(True),'clipping':clipping,
     'monitor':monitor,'monitor_man':lambda:monitor('man'),'monitor_me':lambda:monitor('me'),'nursery':nursery,
     'lighthouse':lighthouse,'lantern':lantern,'lh_stairs':lambda:lh_stairs(0),'lh_stairs_man':lambda:lh_stairs(1),'lh_stairs_close':lambda:lh_stairs(2),
-    'logbook':logbook,'logbook_red':lambda:logbook(True)}
+    'logbook':logbook,'logbook_red':lambda:logbook(True),
+    'lh_door':lh_door,'lh_door_open':lambda:lh_door(True),'dock_boat':dock_boat,'logbook_shift':lambda:logbook(True,('Shift change.','Hers is over.','Mine begins.'))}
 def caption(text):
     lay=Image.new('RGBA',(W,H),(0,0,0,0)); d=ImageDraw.Draw(lay); f=F(B,70)
     words=text.split(); lines=[]; cur=''

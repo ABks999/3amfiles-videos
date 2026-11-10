@@ -1,30 +1,29 @@
 LINES = [
-    ("At 3:10 AM, the lighthouse turned itself on.", "lighthouse", 0.3),
-    ("I'm the only keeper on Gull Rock. That lamp died in 1952.", "lighthouse", 0.2),
-    ("I climbed all one hundred and twelve steps.", "lh_stairs", 0.2),
-    ("The lamp was turning. Nobody was there.", "lantern", 0.3),
-    ("But the old keeper's logbook was open on the desk.", "logbook", 0.2),
-    ("The last entry was dated tonight. The ink was still wet.", "logbook", 0.3),
-    ("The new keeper is coming up.", "logbook_red", 0.4),
-    ("Then I heard footsteps on the stairs below me.", "dark", 0.3),
-    ("Something was climbing. Slowly.", "lh_stairs_man", 0.8),
-    ("It was counting the steps out loud. It had reached one hundred and eleven.", "lh_stairs_close", 0.8),
+    ("Step one hundred and twelve. Then the counting stopped.", "lh_stairs_close", 0.3),
+    ("I held the iron door shut.", "lh_door", 0.2),
+    ("A woman's voice whispered through the keyhole.", "lh_door", 0.3),
+    ("Thank you for coming. I've waited seventy years.", "dark", 0.4),
+    ("The door swung open. Empty stairs. Wet footprints, going down.", "lh_door_open", 0.3),
+    ("I ran all the way down to the dock.", "lh_stairs", 0.2),
+    ("My boat was already drifting away. She was rowing it.", "dock_boat", 0.3),
+    ("Behind me, the lamp turned itself on again.", "lighthouse", 0.3),
+    ("The logbook had one new line, in my own handwriting.", "logbook", 0.8),
+    ("Shift change. Her seventy years are over. Mine just started.", "logbook_shift", 0.8),
 ]
 CAPTIONS = [
-    "At 3:10 AM, the lighthouse turned itself on.",
-    "I'm the only keeper on Gull Rock. That lamp died in 1952.",
-    "I climbed all 112 steps.",
-    "The lamp was turning. Nobody was there.",
-    "But the old keeper's logbook was open on the desk.",
-    "The last entry was dated TONIGHT. The ink was still wet.",
-    "\"The new keeper is coming up.\"",
-    "Then I heard footsteps on the stairs below me.",
-    "Something was climbing. Slowly.",
-    "It was counting the steps out loud. It had reached 111.",
+    "Step 112. Then the counting stopped.",
+    "I held the iron door shut.",
+    "A woman's voice whispered through the keyhole.",
+    "\"Thank you for coming. I've waited 70 years.\"",
+    "The door swung open. Empty stairs. Wet footprints, going DOWN.",
+    "I ran all the way down to the dock.",
+    "My boat was already drifting away. SHE was rowing it.",
+    "Behind me, the lamp turned itself on again.",
+    "The logbook had one new line, in my own handwriting.",
+    "Shift change. Her 70 years are over. Mine just started.",
 ]
 # Female (whisper) voice lines, matched exactly by text
-FEMALE = ("The new keeper is coming up.",)
-HOOK = "SOMEONE LIT IT"
-TOPLABEL = "PART 1"
-ENDTEXT = ("FOLLOW FOR", "PART 2")
+FEMALE = ("Thank you for coming. I've waited seventy years.",)
+HOOK = "SHE WAS WAITING"
+TOPLABEL = "PART 2"
 LOCATION = ("GULL ROCK, MAINE", "NOVEMBER 2, 2016")
