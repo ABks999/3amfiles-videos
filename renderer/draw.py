@@ -723,7 +723,160 @@ def dock_boat():  # stone jetty at night, cut mooring rope, my rowboat drifting 
     d=ImageDraw.Draw(im); _rain(d,90,13)
     d.polygon([(BW,BH),(BW,1450),(980,1500),(860,BH)],fill=(5,6,7))  # foreground rock right
     return noise_tex(im,8)
-
+# ---------- Ep09: smart doorbell ----------
+def _hoodie(d,x,y,s,col=(10,11,14),face=None,eyes=None,smile=False):
+    """hooded person, head+shoulders; (x,y)=chin centre, s=scale (head width ~ 2*s*60)."""
+    hw=60*s
+    d.polygon([(x-hw*3.2,y+hw*4.2),(x-hw*2.6,y+hw*1.3),(x-hw*1.1,y+hw*0.5),(x+hw*1.1,y+hw*0.5),(x+hw*2.6,y+hw*1.3),(x+hw*3.2,y+hw*4.2)],fill=col)  # shoulders
+    d.ellipse([x-hw*1.35,y-hw*2.6,x+hw*1.35,y+hw*0.7],fill=col)  # hood
+    if face:
+        d.ellipse([x-hw*0.85,y-hw*2.0,x+hw*0.85,y+hw*0.25],fill=face)
+        sh=tuple(max(0,c-35) for c in face)
+        d.chord([x-hw*0.85,y-hw*2.0,x+hw*0.85,y-hw*0.9],180,360,fill=sh)  # hood shadow on the forehead
+        if eyes:
+            for sx in (-1,1): d.ellipse([x+sx*hw*0.38-hw*0.16,y-hw*1.05-hw*0.09,x+sx*hw*0.38+hw*0.16,y-hw*1.05+hw*0.09],fill=eyes)
+        else:
+            for sx in (-1,1): d.ellipse([x+sx*hw*0.38-hw*0.14,y-hw*1.05-hw*0.07,x+sx*hw*0.38+hw*0.14,y-hw*1.05+hw*0.07],fill=sh)
+        if smile: d.arc([x-hw*0.5,y-hw*0.75,x+hw*0.5,y-hw*0.05],15,165,fill=(20,24,26),width=max(3,int(hw*0.09)))
+        d.line([x,y-hw*0.95,x-hw*0.08,y-hw*0.55],fill=sh,width=max(2,int(hw*0.05)))  # nose
+    for sx in (-1,1): d.line([x+sx*hw*0.45,y+hw*0.6,x+sx*hw*0.55,y+hw*1.9],fill=(40,42,48),width=max(3,int(hw*0.07)))  # hoodie strings
+def _ringfeed(mode):  # fisheye doorbell camera picture, IR black-and-white with a cyan tint, size 640x880
+    sw,sh=640,880; im=Image.new('RGB',(sw,sh),(30,36,40)); d=ImageDraw.Draw(im)
+    d.rectangle([0,0,sw,sh*0.5],fill=(14,18,22))  # night sky / street
+    for k in range(3): d.rectangle([60+k*190,170,150+k*190,330],fill=(24,30,34))  # houses across the street
+    d.ellipse([500,90,540,130],fill=(120,135,140))  # streetlight
+    d.polygon([(0,sh*0.5),(sw,sh*0.5),(sw,sh),(0,sh)],fill=(46,54,58))  # porch floor
+    for k in range(1,8): d.line([0,sh*0.5+k*k*7,sw,sh*0.5+k*k*7],fill=(38,44,48),width=3)  # boards
+    d.rectangle([0,0,70,sh],fill=(22,26,30)); d.rectangle([sw-70,0,sw,sh],fill=(22,26,30))  # porch posts
+    d.rounded_rectangle([200,sh-150,440,sh-40],10,fill=(60,52,40)); d.text((320,sh-95),'WELCOME',font=F(B,30),fill=(90,80,62),anchor='mm')  # doormat
+    if mode=='far':
+        _hoodie(d,330,470,0.75,(8,10,12),face=(96,104,106))
+        d.polygon([(330-150,470+190),(330+150,470+190),(330+120,sh-60),(330-120,sh-60)],fill=(8,10,12))  # body
+        d.rectangle([330-110,sh-60,330-30,sh-40],fill=(6,8,10)); d.rectangle([330+30,sh-60,330+110,sh-40],fill=(6,8,10))
+    elif mode=='close':
+        _hoodie(d,320,560,2.0,(8,10,12),face=(92,100,102),eyes=(240,255,255),smile=True)
+    im=im.filter(ImageFilter.GaussianBlur(1.2))
+    # fisheye: bulge the picture towards the centre
+    a=np.asarray(im,dtype=np.float32); yy,xx=np.mgrid[0:sh,0:sw].astype(np.float32)
+    nx=(xx-sw/2)/(sw/2); ny=(yy-sh/2)/(sh/2); r=np.sqrt(nx*nx+ny*ny)+1e-6; k=np.clip(r**1.35/r,0,2)
+    srcx=np.clip(sw/2+nx*k*0.92*sw/2,0,sw-1).astype(int); srcy=np.clip(sh/2+ny*k*0.92*sh/2,0,sh-1).astype(int)
+    a=a[srcy,srcx]
+    v=np.clip(1-0.55*(nx*nx*0.8+ny*ny*0.5),0.2,1)[...,None]; a=a*v
+    a[::3]*=0.85; a+=np.random.default_rng(9).normal(0,9,a.shape[:2])[...,None]
+    a=a*np.array([0.85,1.0,1.08])
+    im=Image.fromarray(np.clip(a,0,255).astype('uint8')); d=ImageDraw.Draw(im)
+    d.text((24,22),'FRONT DOOR',font=F(M,30),fill=(220,240,245)); d.ellipse([sw-130,28,sw-108,50],fill=(230,40,30)); d.text((sw-100,22),'LIVE',font=F(M,30),fill=(230,240,245))
+    d.text((24,sh-50),'03:12:44 AM',font=F(M,30),fill=(220,240,245))
+    return im
+def ring_phone(mode='far'):  # phone held in a dark bedroom showing the doorbell app; mode notify = lock screen notification
+    im=base((5,7,12),(10,9,12)); d=ImageDraw.Draw(im)
+    d.rectangle([80,300,420,760],fill=(14,20,34)); im=moon(im,300,430,40); d=ImageDraw.Draw(im)  # window
+    d.line([250,300,250,760],fill=(5,5,8),width=12); d.line([80,530,420,530],fill=(5,5,8),width=12)
+    for x in (60,440): d.polygon([(x-30,270),(x+30,270),(x+50,960),(x-40,960)],fill=(10,9,13))  # curtains
+    d.rectangle([760,380,1060,640],fill=(16,14,16)); d.rectangle([775,395,1045,625],fill=(24,24,30))  # picture frame
+    d.rectangle([0,1120,BW,1135],fill=(22,20,24))
+    vgrad(d,(0,1135,BW,BH),(26,24,32),(10,9,12))
+    for k in range(6): d.arc([-200+k*60,1350+k*70,BW+200-k*60,2300],195,345,fill=(34,32,42),width=10)  # blanket folds
+    im=cone(im,(250,530),(150,1500),(650,1500),(60,80,130),0.18,40); d=ImageDraw.Draw(im)
+    px,py=cx,980; pw,ph=380,760
+    d.rounded_rectangle([px-pw-14,py-ph-14,px+pw+14,py+ph+14],70,fill=(8,8,10)); d.rounded_rectangle([px-pw,py-ph,px+pw,py+ph],60,fill=(16,18,22))
+    if mode=='notify':
+        scr=Image.new('RGB',(2*pw-40,2*ph-60),(10,14,24)); sd=ImageDraw.Draw(scr); sw_,sh_=scr.size
+        for k in range(40): sd.line([0,k*sh_/40,sw_,k*sh_/40+60],fill=(12+k//3,16+k//4,30+k//2),width=int(sh_/40)+2)
+        sd.text((sw_/2,250),'3:12',font=F(B,190),fill=(235,240,250),anchor='mm'); sd.text((sw_/2,390),'Wednesday, November 11',font=F(B,34),fill=(190,200,215),anchor='mm')
+        sd.rounded_rectangle([30,560,sw_-30,800],34,fill=(52,58,72))
+        sd.rounded_rectangle([60,600,140,680],18,fill=(40,170,200)); sd.ellipse([82,622,118,658],outline=(240,250,255),width=6)
+        sd.text((165,605),'DOORBELL',font=F(B,30),fill=(200,210,220)); sd.text((sw_-60,605),'now',font=F(B,28),fill=(170,180,195),anchor='ra')
+        sd.text((165,655),'Front Door',font=F(B,40),fill=(245,248,252)); sd.text((60,720),'Someone is at your door.',font=F(B,36),fill=(225,230,238))
+        im.paste(scr,(px-pw+20,py-ph+30)); im=glow(im,(px,py),520,(50,110,160),0.45); im.paste(scr,(px-pw+20,py-ph+30))
+    else:
+        im.paste(Image.new('RGB',(2*pw-40,2*ph-60),(14,16,20)),(px-pw+20,py-ph+30))
+        feed=_ringfeed(mode).resize((2*pw-40,int((2*pw-40)*880/640))); im.paste(feed,(px-pw+20,py-ph+90))
+        im=glow(im,(px,py),540,(60,130,150),0.5); im.paste(feed,(px-pw+20,py-ph+90)); d=ImageDraw.Draw(im)
+        by=py+ph-190
+        for k,lab in enumerate(('TALK','SIREN','UNLOCK')):
+            bx=px-240+k*240; d.ellipse([bx-55,by-55,bx+55,by+55],fill=(34,40,48))
+            d.ellipse([bx-20,by-20,bx+20,by+20],fill=(60,200,220) if lab!='SIREN' else (220,60,50))
+    d=ImageDraw.Draw(im); d.rounded_rectangle([px-90,py-ph+8,px+90,py-ph+40],16,fill=(4,4,6))  # notch
+    d.line([px-pw+60,py-ph+120,px-pw+260,py-ph+600],fill=(70,90,100),width=4)  # glare
+    # hands holding the phone (dark, lit from the screen)
+    for s in (-1,1):
+        hx=px+s*(pw+10)
+        d.polygon([(hx,py+80),(hx+s*70,py+40),(hx+s*150,py+500),(hx+s*120,BH),(hx-s*60,BH),(hx-s*30,py+560)],fill=(34,28,28))
+        for f in range(3): d.rounded_rectangle([min(hx,hx-s*70),py+130+f*95,max(hx,hx-s*70),py+190+f*95],26,fill=(46,38,36))
+    return noise_tex(im,7)
+def keypad():  # close-up: smart lock keypad on the front door at night, a pale finger pressing a key, 'UNLOCKED'
+    im=base((10,8,8),(16,12,10)); d=ImageDraw.Draw(im)
+    for x in range(0,BW,64): d.line([x+_R.normal(0,4),0,x,BH],fill=(22,16,13),width=6)  # wood grain
+    d.rectangle([0,0,140,BH],fill=(30,30,34)); d.rectangle([140,0,170,BH],fill=(12,10,10))  # door frame + gap
+    d.rectangle([980,0,BW,BH],fill=(40,34,30)); d.rectangle([1000,0,BW,BH],fill=(26,22,20))  # panel edge
+    kx,ky=600,880
+    d.rounded_rectangle([kx-230,ky-430,kx+230,ky+470],50,fill=(14,14,16)); d.rounded_rectangle([kx-210,ky-410,kx+210,ky+450],40,fill=(26,26,30))
+    d.rounded_rectangle([kx-160,ky-370,kx+160,ky-250],18,fill=(10,30,18)); d.text((kx,ky-310),'UNLOCKED',font=F(M,46),fill=(110,255,150),anchor='mm')
+    for r_ in range(4):
+        for c_ in range(3):
+            lab=['1','2','3','4','5','6','7','8','9','*','0','#'][r_*3+c_]; bx=kx-120+c_*120; by=ky-150+r_*130
+            d.ellipse([bx-48,by-48,bx+48,by+48],fill=(36,38,42)); d.ellipse([bx-44,by-44,bx+44,by+44],outline=(80,200,120),width=3)
+            d.text((bx,by),lab,font=F(B,44),fill=(170,240,190),anchor='mm')
+    d.ellipse([kx-36,ky+370,kx+36,ky+442],fill=(20,20,22)); d.ellipse([kx-14,ky+392,kx+14,ky+420],fill=(110,255,150))
+    im=glow(im,(kx,ky),420,(40,160,80),0.45); im=glow(im,(kx,ky-310),160,(80,255,130),0.4); d=ImageDraw.Draw(im)
+    # handle below
+    d.rounded_rectangle([kx-60,ky+520,kx+60,ky+640],30,fill=(60,56,50)); d.rounded_rectangle([kx-40,ky+600,kx+330,ky+660],28,fill=(86,80,70))
+    # pale finger + hand coming from the right, pressing '6'
+    fx,fy=kx+120,ky-20
+    d.polygon([(fx-10,fy-30),(fx+40,fy-40),(BW+40,fy+60),(BW+40,fy+330),(fx+300,fy+260),(fx+20,fy+40)],fill=(118,122,118))
+    d.ellipse([fx-34,fy-40,fx+34,fy+36],fill=(130,134,128)); d.ellipse([fx-20,fy-30,fx+14,fy+4],fill=(170,170,160))  # fingertip + nail
+    d.polygon([(fx+140,fy+90),(fx+380,fy+120),(fx+390,fy+170),(fx+150,fy+150)],fill=(98,102,98))  # knuckle shadow
+    d.polygon([(fx+380,fy-10),(BW+40,fy-60),(BW+40,fy+360),(fx+420,fy+300)],fill=(14,14,18))  # dark hoodie sleeve
+    im=cone(im,(kx,ky),(kx-500,1700),(kx+500,1700),(40,140,70),0.15,60)
+    d=ImageDraw.Draw(im); d.polygon([(0,BH),(0,1720),(260,1800),(360,BH)],fill=(6,6,8))
+    return noise_tex(im,8)
+def slats():  # view from inside a closet through the slats: a hooded man standing right outside in my bedroom
+    im=base((10,12,20),(14,13,16)); d=ImageDraw.Draw(im)
+    d.rectangle([700,360,1050,820],fill=(22,32,52)); im=moon(im,930,480,45); d=ImageDraw.Draw(im)  # window
+    d.line([875,360,875,820],fill=(6,6,8),width=12); d.line([700,590,1050,590],fill=(6,6,8),width=12)
+    d.rounded_rectangle([80,1080,560,1420],24,fill=(40,34,42)); d.rounded_rectangle([60,960,180,1420],24,fill=(46,40,48))  # bed
+    d.rounded_rectangle([200,1040,420,1120],26,fill=(120,120,138)); d.polygon([(180,1180),(560,1140),(560,1420),(180,1420)],fill=(56,50,66))
+    d.rectangle([0,1420,BW,BH],fill=(20,17,18))
+    d.rounded_rectangle([1000,1380,1180,1700],10,fill=(26,22,24)); d.rectangle([1010,1300,1050,1380],fill=(30,26,28))  # lamp (off)
+    im=cone(im,(875,590),(560,1600),(1150,1600),(70,90,140),0.25,40); d=ImageDraw.Draw(im)
+    # the man: hooded, standing close, face lit by the moon, staring at the slats
+    _hoodie(d,620,820,1.5,(8,9,12),face=(105,112,124),eyes=(235,245,250))
+    d.polygon([(620-280,820+250),(620+280,820+250),(620+240,1800),(620-240,1800)],fill=(8,9,12))
+    d.polygon([(620+250,1000),(620+330,1020),(620+300,1500),(620+240,1500)],fill=(8,9,12))  # arm, hand reaching to the door
+    im=glow(im,(620,760),160,(60,70,100),0.2); d=ImageDraw.Draw(im)
+    # foreground slats (inside the closet: very dark), with narrow gaps
+    for y in range(0,BH,76): d.polygon([(0,y),(BW,y),(BW,y+34),(0,y+38)],fill=(6,5,6))
+    d.rectangle([0,0,90,BH],fill=(4,4,5)); d.rectangle([BW-90,0,BW,BH],fill=(4,4,5))
+    d.rectangle([590,0,620,BH],fill=(3,3,4))  # centre seam between the two closet doors
+    for k in range(5): x=150+k*30; d.line([x,200,x+20,1500],fill=(8,7,8),width=10)  # hanging clothes edge
+    return noise_tex(im,7)
+def porch():  # outside a house at night: me (hooded) at my own front door, ringing; doorbell ring glowing; a figure behind the curtain inside
+    im=base((6,9,20),(14,14,22)); d=ImageDraw.Draw(im); stars(d,60,500,21)
+    im=moon(im,980,360,45); d=ImageDraw.Draw(im)
+    for x,h in ((40,560),(1160,620)): pine(d,x,1180,h,150,(6,9,12))
+    d.rectangle([150,560,1060,1260],fill=(30,30,36)); d.polygon([(100,580),(cx,330),(1110,580)],fill=(18,18,24))  # house + roof
+    for y in range(600,1260,42): d.line([150,y,1060,y],fill=(36,36,42),width=4)  # siding
+    d.rectangle([200,700,420,960],fill=(16,16,20)); d.rectangle([215,715,405,945],fill=(70,58,40))  # left window (warm, curtain)
+    d.polygon([(215,715),(300,715),(280,945),(215,945)],fill=(50,40,28))
+    d.ellipse([320,770,370,825],fill=(12,10,10)); d.rectangle([318,820,372,945],fill=(12,10,10))  # someone watching from inside
+    d.rectangle([800,700,1010,960],fill=(16,16,20)); d.rectangle([815,715,995,945],fill=(20,22,30))
+    d.rectangle([520,760,700,1250],fill=(16,14,14)); d.rectangle([535,775,685,1250],fill=(52,36,26))  # front door
+    for yy in (800,1020): d.rectangle([555,yy,665,yy+190],outline=(40,28,20),width=6)
+    d.ellipse([650,1000,672,1022],fill=(150,130,80))
+    d.rounded_rectangle([716,960,746,1030],10,fill=(20,20,24)); d.ellipse([721,985,741,1005],outline=(80,220,255),width=5)  # doorbell
+    im=glow(im,(731,995),60,(60,200,255),0.8); im=glow(im,(610,720),200,(200,160,90),0.5); d=ImageDraw.Draw(im)
+    d.rounded_rectangle([590,700,630,740],8,fill=(255,220,150))  # porch light
+    d.rectangle([380,1250,840,1290],fill=(40,36,34)); d.rectangle([340,1290,880,1330],fill=(34,30,30)); d.rectangle([300,1330,920,1370],fill=(28,26,26))  # steps
+    im=cone(im,(610,720),(360,1300),(860,1300),(200,160,100),0.22,40); d=ImageDraw.Draw(im)
+    vgrad(d,(0,1370,BW,BH),(18,20,22),(8,9,10)); d.polygon([(450,1370),(770,1370),(980,BH),(240,BH)],fill=(30,30,32))  # path
+    # me, seen from behind, hood up, arm raised to the doorbell
+    x,y=640,1310
+    d.ellipse([x-55,y-430,x+55,y-310],fill=(8,8,10)); d.polygon([(x-90,y-330),(x+90,y-330),(x+110,y-110),(x+80,y),(x-80,y),(x-110,y-110)],fill=(8,8,10))
+    d.polygon([(x+70,y-310),(x+100,y-290),(x+90,y-320),(x+86,y-325)],fill=(8,8,10)); d.line([x+80,y-300,x+90,y-320],fill=(8,8,10),width=26)
+    d.line([x+85,y-305,x+716-640+5,995-1310+y+5],fill=(8,8,10),width=26)  # arm to the doorbell
+    d.polygon([(0,BH),(0,1600),(200,1680),(300,BH)],fill=(4,5,7)); d.polygon([(BW,BH),(BW,1560),(1000,1660),(900,BH)],fill=(4,5,7))  # foreground bushes
+    return noise_tex(im,7)
 SC={'title':title,'outside':outside,'phone':phone,'phone_red':lambda:phone(True),'cam_empty':lambda:cam(0),'cam_man':lambda:cam(1),'cam_man_close':lambda:cam(2),'dark':dark,'dark_red':lambda:dark(True),
     'building':building,'elev9':lambda:elevator(9),'elev13':lambda:elevator(13),'hall':lambda:hall(False),'hall_woman':lambda:hall(True),'room_woman':room,
     'cabin':cabin,'door':door,'prints':prints,'closet':lambda:closet(False),'closet_woman':lambda:closet(True),
@@ -732,7 +885,8 @@ SC={'title':title,'outside':outside,'phone':phone,'phone_red':lambda:phone(True)
     'monitor':monitor,'monitor_man':lambda:monitor('man'),'monitor_me':lambda:monitor('me'),'nursery':nursery,
     'lighthouse':lighthouse,'lantern':lantern,'lh_stairs':lambda:lh_stairs(0),'lh_stairs_man':lambda:lh_stairs(1),'lh_stairs_close':lambda:lh_stairs(2),
     'logbook':logbook,'logbook_red':lambda:logbook(True),
-    'lh_door':lh_door,'lh_door_open':lambda:lh_door(True),'dock_boat':dock_boat,'logbook_shift':lambda:logbook(True,('Shift change.','Hers is over.','Mine begins.'))}
+    'lh_door':lh_door,'lh_door_open':lambda:lh_door(True),'dock_boat':dock_boat,'logbook_shift':lambda:logbook(True,('Shift change.','Hers is over.','Mine begins.')),
+    'ring_notify':lambda:ring_phone('notify'),'ring_far':lambda:ring_phone('far'),'ring_close':lambda:ring_phone('close'),'keypad':keypad,'slats':slats,'porch':porch}
 def caption(text):
     lay=Image.new('RGBA',(W,H),(0,0,0,0)); d=ImageDraw.Draw(lay); f=F(B,70)
     words=text.split(); lines=[]; cur=''
