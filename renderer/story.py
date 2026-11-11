@@ -1,30 +1,31 @@
 LINES = [
-    ("There's a man at my front door. He has my face.", "ring_close", 0.25),
-    ("It started at 3:12 AM. My doorbell rang once.", "ring_notify", 0.2),
-    ("On the camera, he was wearing my gray hoodie.", "ring_far", 0.2),
-    ("He looked up at the lens and smiled.", "ring_close", 0.25),
-    ("Then he typed my door code. Click.", "keypad", 0.25),
-    ("I hid in my bedroom closet.", "closet", 0.2),
-    ("His footsteps walked straight to my room.", "hall", 0.25),
-    ("He leaned close to the slats and whispered, in my voice.", "slats", 0.3),
-    ("Your turn to wait outside.", "dark_red", 0.6),
-    ("I've been ringing that doorbell ever since.", "porch", 0.6),
+    ("Something is knocking. From inside the basement.", "bnb_door", 0.25),
+    ("It started at check-in. A cheap Airbnb outside Dayton.", "bnb_house", 0.2),
+    ("The host left three rules on the fridge.", "bnb_rules", 0.2),
+    ("Rule one. Never open the basement door.", "bnb_rules", 0.2),
+    ("Rule two. This house has no basement.", "bnb_rules_red", 0.25),
+    ("At 3:04 AM, the knocking started.", "hall", 0.2),
+    ("Then a voice behind the door said my name.", "bnb_door", 0.25),
+    ("I texted the host. He answered in one second.", "bnb_text", 0.25),
+    ("Rule three. Answer it. Or it comes up.", "bnb_text", 0.6),
+    ("Then the doorknob started to turn.", "bnb_door_turn", 0.3),
 ]
 CAPTIONS = [
-    "There's a man at my front door. He has MY face.",
-    "It started at 3:12 AM. My doorbell rang once.",
-    "On the camera, he was wearing my gray hoodie.",
-    "He looked up at the lens and smiled.",
-    "Then he typed my door code. Click.",
-    "I hid in my bedroom closet.",
-    "His footsteps walked straight to my room.",
-    "He leaned close to the slats and whispered, in MY voice.",
-    "\"Your turn to wait outside.\"",
-    "I've been ringing that doorbell ever since.",
+    "Something is knocking. From INSIDE the basement.",
+    "It started at check-in. A cheap Airbnb outside Dayton.",
+    "The host left three rules on the fridge.",
+    "Rule one. Never open the basement door.",
+    "Rule two. This house has NO basement.",
+    "At 3:04 AM, the knocking started.",
+    "Then a voice behind the door said my name.",
+    "I texted the host. He answered in one second.",
+    "\"Rule three. Answer it. Or it comes up.\"",
+    "Then the doorknob started to turn...",
 ]
 # Female (whisper) voice lines, matched exactly by text
 FEMALE = ()
-HOOK = "THAT'S NOT ME"
-TOPLABEL = ""
-LOCATION = ("CEDAR FALLS, IOWA", "MARCH 3, 2021")
-LOOP = True
+HOOK = "DON'T OPEN IT"
+TOPLABEL = "PART 1"
+ENDTEXT = ("FOLLOW FOR", "PART 2")
+LOCATION = ("DAYTON, OHIO", "JANUARY 9, 2022")
+LOOP = False

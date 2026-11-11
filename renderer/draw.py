@@ -877,6 +877,161 @@ def porch():  # outside a house at night: me (hooded) at my own front door, ring
     d.line([x+85,y-305,x+716-640+5,995-1310+y+5],fill=(8,8,10),width=26)  # arm to the doorbell
     d.polygon([(0,BH),(0,1600),(200,1680),(300,BH)],fill=(4,5,7)); d.polygon([(BW,BH),(BW,1560),(1000,1660),(900,BH)],fill=(4,5,7))  # foreground bushes
     return noise_tex(im,7)
+def _hand_writing(d,x,y,text,size,col):  # slightly wobbly handwritten-looking line (letters jittered)
+    f=F(B,size); xx=x
+    for k,ch in enumerate(text):
+        d.text((xx,y+math.sin(k*1.7)*2),ch,font=f,fill=col); xx+=d.textlength(ch,font=f)
+def bnb_house():  # rental house at night: lockbox on the door, porch light, and a small basement window glowing red at ground level
+    im=base((6,8,18),(14,13,20)); d=ImageDraw.Draw(im); stars(d,70,520,33)
+    im=moon(im,240,380,50); d=ImageDraw.Draw(im)
+    for x,h in ((60,620),(1150,680),(1030,480)): pine(d,x,1230,h,150,(6,9,12))
+    d.polygon([(110,700),(cx,400),(1100,700)],fill=(20,18,24)); d.polygon([(110,700),(cx,400),(cx,430),(150,700)],fill=(28,26,32))  # roof
+    d.rectangle([170,700,1040,1300],fill=(34,32,38))
+    for y in range(720,1300,40): d.line([170,y,1040,y],fill=(40,38,44),width=4)  # siding
+    d.rectangle([540,520,670,640],fill=(14,14,18)); d.rectangle([552,532,658,628],fill=(24,26,34))  # attic window
+    for wx in (230,800):
+        d.rectangle([wx,780,wx+180,1000],fill=(14,14,18)); d.rectangle([wx+12,792,wx+168,988],fill=(20,22,30))
+        d.line([wx+90,792,wx+90,988],fill=(12,12,16),width=8); d.line([wx+12,890,wx+168,890],fill=(12,12,16),width=8)
+        d.rectangle([wx-20,770,wx+200,790],fill=(28,26,30)); d.rectangle([wx-14,1000,wx+194,1016],fill=(28,26,30))
+    d.rectangle([520,820,690,1240],fill=(14,12,12)); d.rectangle([534,834,676,1240],fill=(58,30,24))  # red front door
+    for yy in (870,1060): d.rectangle([552,yy,658,yy+150],outline=(40,20,16),width=6)
+    d.ellipse([650,1040,670,1060],fill=(170,150,90))
+    d.rounded_rectangle([700,1000,744,1070],6,fill=(20,20,22)); d.rectangle([708,1010,736,1040],fill=(70,72,76))  # key lockbox
+    d.ellipse([716,1046,728,1058],fill=(150,150,150))
+    d.rounded_rectangle([590,770,620,800],8,fill=(255,215,150))  # porch light
+    im=glow(im,(605,790),190,(200,150,80),0.55); im=cone(im,(605,790),(380,1320),(830,1320),(200,150,90),0.22,40); d=ImageDraw.Draw(im)
+    d.rectangle([420,1240,790,1275],fill=(42,38,36)); d.rectangle([380,1275,830,1310],fill=(34,30,30))  # steps
+    d.rectangle([170,1300,1040,1345],fill=(26,24,26))  # foundation
+    d.rectangle([860,1304,980,1340],fill=(12,6,6)); d.rectangle([866,1308,974,1336],fill=(150,30,22))  # basement window, glowing red
+    d.line([920,1308,920,1336],fill=(30,8,8),width=5)
+    im=glow(im,(920,1322),110,(190,30,20),0.7); d=ImageDraw.Draw(im)
+    d.ellipse([890,1312,906,1330],fill=(20,6,6))  # a shape behind the basement glass
+    vgrad(d,(0,1345,BW,BH),(16,18,20),(7,8,9)); d.polygon([(470,1345),(740,1345),(900,BH),(320,BH)],fill=(28,28,30))  # path
+    d.rectangle([0,1345,BW,1352],fill=(22,24,22))
+    for k in range(40): gx=_R.random()*BW; gy=1360+_R.random()*500; d.line([gx,gy,gx+_R.normal(0,4),gy-14-_R.random()*14],fill=(14,18,14),width=3)  # grass
+    # foreground: rental car edge + suitcase handle, lower right; mailbox lower left
+    d.polygon([(BW,BH),(BW,1620),(1060,1640),(940,1760),(880,BH)],fill=(5,6,8)); d.line([1000,1700,1150,1680],fill=(40,44,52),width=5)
+    d.rectangle([60,1450,90,1900],fill=(5,5,7)); d.rounded_rectangle([10,1380,170,1470],30,fill=(6,6,8))
+    return noise_tex(im,7)
+def bnb_rules(red=False):  # handwritten HOUSE RULES note on a fridge under a dim pendant light; bottom torn off; red = rule 2 circled
+    im=base((12,12,14),(18,16,16)); d=ImageDraw.Draw(im)
+    for y in range(0,BH,120):  # kitchen wall tiles left side
+        for x in range(0,170,120): d.rectangle([x+4,y+4,x+116,y+116],outline=(22,22,24),width=4)
+    d.rectangle([150,200,1150,BH],fill=(30,32,34)); d.rectangle([170,200,1130,BH],fill=(40,42,44))  # fridge
+    vgrad(d,(170,200,1130,BH),(46,48,50),(28,30,32))
+    d.line([170,760,1130,760],fill=(20,20,22),width=10)  # freezer seam
+    d.rounded_rectangle([1050,300,1090,700],18,fill=(70,72,74)); d.rounded_rectangle([1050,840,1090,1500],18,fill=(70,72,74))  # handles
+    # other fridge stuff: takeaway menu, wifi card, magnets
+    d.polygon([(230,300),(470,280),(480,620),(240,640)],fill=(120,110,90)); d.text((350,360),'PIZZA',font=F(B,40),fill=(110,30,24),anchor='mm')
+    for k in range(6): d.line([260,430+k*30,450,425+k*30],fill=(90,82,66),width=5)
+    d.rounded_rectangle([760,330,980,500],10,fill=(150,150,150)); d.text((870,380),'WIFI',font=F(B,36),fill=(40,40,44),anchor='mm'); d.text((870,440),'guest3am',font=F(M,30),fill=(50,50,54),anchor='mm')
+    for mx,my,mc in ((350,285,(160,40,30)),(870,320,(40,90,150)),(300,1720,(50,120,60))): d.ellipse([mx-22,my-22,mx+22,my+22],fill=mc)
+    # the note
+    nx0,ny0,nx1,ny1=270,860,960,1640
+    d.polygon([(nx0+10,ny0+16),(nx1+10,ny0+6),(nx1+16,ny1+10),(nx0+16,ny1+20)],fill=(18,18,20))  # shadow
+    pts=[(nx0,ny0+10),(nx1,ny0)]
+    for k in range(13): pts.append((nx1-k*(nx1-nx0)/12,ny1+(18 if k%2 else -6)+_R.normal(0,4)))  # torn bottom edge
+    d.polygon(pts,fill=(150,142,118))
+    for k in range(8): d.line([nx0+20,ny0+140+k*62,nx1-20,ny0+132+k*62],fill=(170,180,200),width=2)  # ruled lines
+    d.ellipse([cx-30,ny0-30,cx+30,ny0+30],fill=(170,30,24)); d.ellipse([cx-12,ny0-18,cx+4,ny0-6],fill=(230,120,100))  # red magnet
+    ink=(12,10,22)
+    _hand_writing(d,nx0+150,ny0+60,'HOUSE RULES',56,ink); d.line([nx0+150,ny0+130,nx0+520,ny0+126],fill=ink,width=5)
+    _hand_writing(d,nx0+40,ny0+190,'1. Never open the',44,ink); _hand_writing(d,nx0+90,ny0+250,'basement door.',44,ink)
+    _hand_writing(d,nx0+40,ny0+350,'2. This house has',44,ink); _hand_writing(d,nx0+90,ny0+410,'no basement.',44,ink)
+    _hand_writing(d,nx0+40,ny0+520,'3. If it kno',44,ink)  # torn off mid-word
+    if red:
+        d.ellipse([nx0+10,ny0+325,nx1-40,ny0+490],outline=(170,14,10),width=10); d.line([nx0+90,ny0+472,nx0+420,ny0+468],fill=(170,14,10),width=7)
+    im=glow(im,(600,180),200,(200,170,110),0.35)
+    im=cone(im,(600,120),(150,1900),(1050,1900),(200,170,110),0.08,60)
+    if red: im=glow(im,(560,1290),300,(170,20,15),0.35)
+    d=ImageDraw.Draw(im)
+    d.rectangle([560,0,640,120],fill=(10,10,10)); d.polygon([(470,120),(730,120),(680,40),(520,40)],fill=(22,20,18))  # pendant lamp
+    d.ellipse([570,105,630,135],fill=(255,225,170))
+    d.polygon([(0,BH),(0,1750),(240,1800),(320,BH)],fill=(5,5,6))  # foreground counter edge
+    return noise_tex(im,7)
+def bnb_door(mode='knock'):  # basement door in a narrow hallway: chain, three deadbolts, 'DO NOT OPEN'; light seeping under it.
+    # mode knock = shadows of feet under the door + knock rings; mode turn = knob turning, bolts unlocked (red), pale fingers reaching out under the door
+    turn=(mode=='turn')
+    im=base((12,10,10),(18,14,12)); d=ImageDraw.Draw(im)
+    for x in range(0,BW,56): d.line([x,0,x,1620],fill=(22,17,14),width=4)  # old wallpaper stripes
+    for k in range(30): px_=_R.random()*BW; py_=300+_R.random()*1200; d.ellipse([px_,py_,px_+5,py_+5],fill=(26,20,16))
+    d.rectangle([0,1620,BW,BH],fill=(26,20,16))
+    for k in range(12): d.line([0,1620+k*48,BW,1620+k*48],fill=(34,26,20),width=3)  # floorboards
+    d.rectangle([310,380,900,1630],fill=(28,20,16))  # frame
+    dx0,dy0,dx1,dy1=340,410,870,1620
+    d.rectangle([dx0,dy0,dx1,dy1],fill=(56,38,28))
+    x0=dx0+40; pw=dx1-x0-40
+    d.rectangle([x0,dy0+50,x0+pw,dy0+550],outline=(40,26,18),width=12); d.rectangle([x0,dy0+610,x0+pw,dy0+1160],outline=(40,26,18),width=12)
+    px0=dx0+150  # the 'DO NOT OPEN' paper taped on
+    d.polygon([(px0,dy0+160),(px0+300,dy0+150),(px0+306,dy0+330),(px0+6,dy0+340)],fill=(196,186,160))
+    _hand_writing(d,px0+34,dy0+190,'DO NOT',50,(150,24,18)); _hand_writing(d,px0+44,dy0+255,'OPEN',58,(150,24,18))
+    for tx,ty in ((px0-10,dy0+150),(px0+280,dy0+140)): d.rectangle([tx,ty,tx+40,ty+18],fill=(170,165,140))
+    for k in range(3):  # deadbolts (turned red when unlocked from the other side)
+        by=dy0+420+k*190; d.rounded_rectangle([dx1-110,by,dx1-30,by+70],10,fill=(110,100,80))
+        if turn: d.rectangle([dx1-74,by+12,dx1-66,by+58],fill=(40,30,24)); d.ellipse([dx1-46,by+24,dx1-34,by+36],fill=(255,60,40))
+        else: d.ellipse([dx1-84,by+20,dx1-56,by+50],fill=(40,36,30))
+    kx,ky=dx1-126,dy0+784
+    d.ellipse([kx-26,ky-26,kx+26,ky+26],fill=(160,130,70)); d.ellipse([kx-14,ky-18,kx-2,ky-6],fill=(220,200,140))  # knob
+    if turn:
+        d.ellipse([kx-8,ky-8,kx+8,ky+8],fill=(90,70,40))
+        for r in (50,72):  d.arc([kx-r,ky-r,kx+r,ky+r],200,320,fill=(230,210,170),width=6)  # turning motion
+        d.polygon([(kx+60,ky-40),(kx+86,ky-60),(kx+80,ky-24)],fill=(230,210,170))
+        for k in range(9): t=k/8; lx=dx1-40-t*20; ly=dy0+1000+t*200; d.ellipse([lx-9,ly-6,lx+9,ly+6],outline=(150,140,110),width=4)  # chain hanging loose
+    else:
+        for k in range(9): t=k/8; lx=dx1-60-t*120; ly=dy0+1000+math.sin(t*math.pi)*70; d.ellipse([lx-9,ly-6,lx+9,ly+6],outline=(150,140,110),width=4)
+    lc=(190,40,24)
+    d.rectangle([dx0,dy1-12,dx1,dy1+4],fill=(230,80,50) if not turn else (255,110,70))
+    if turn:
+        im=glow(im,(cx,dy1),360,lc,0.75); d=ImageDraw.Draw(im)
+        for k,fx in enumerate((440,480,520,560,700,740,780)):  # long pale fingers sliding out under the door
+            ln=60+((k*37)%50); d.rounded_rectangle([fx-13,dy1-4,fx+13,dy1+ln],12,fill=(160,156,146)); d.ellipse([fx-9,dy1+ln-18,fx+9,dy1+ln-4],fill=(200,196,186))
+        im=glow(im,(kx,ky),110,(220,190,120),0.45)
+    else:
+        for k in range(2): d.rectangle([470+k*190,dy1-14,540+k*190,dy1+6],fill=(10,4,3))  # feet shadows
+        im=glow(im,(cx,dy1),300,lc,0.55); d=ImageDraw.Draw(im)
+        for r in (60,100,140):  # knock rings
+            d.arc([cx-r-40,dy0+700-r,cx+r-40,dy0+700+r],200,250,fill=(200,180,150),width=5); d.arc([cx-r-40,dy0+700-r,cx+r-40,dy0+700+r],290,340,fill=(200,180,150),width=5)
+    d=ImageDraw.Draw(im)  # hallway: light switch, framed photo, small table with a lamp
+    d.rounded_rectangle([960,900,1010,980],8,fill=(150,140,120)); d.rectangle([978,925,992,955],fill=(90,84,72))
+    d.rectangle([60,620,250,860],fill=(36,28,22)); d.rectangle([76,636,234,844],fill=(60,58,54)); d.ellipse([125,680,185,750],fill=(40,38,36))
+    d.rectangle([980,1300,1190,1330],fill=(30,22,16)); d.rectangle([1000,1330,1020,1620],fill=(24,18,12)); d.rectangle([1150,1330,1170,1620],fill=(24,18,12))
+    d.polygon([(1030,1180),(1150,1180),(1120,1100),(1060,1100)],fill=(110,90,60)); d.rectangle([1085,1180,1095,1300],fill=(60,50,40))
+    im=glow(im,(1090,1150),150,(200,150,90),0.4)
+    im=cone(im,(1090,1170),(700,1700),(1209,1700),(180,130,80),0.15,40); d=ImageDraw.Draw(im)
+    d.polygon([(0,0),(130,0),(150,BH),(0,BH)],fill=(6,5,5))  # foreground wall edge
+    return noise_tex(im,7)
+def bnb_text():  # phone in a dark bedroom: chat with the host, 'Rule 3: Answer it. Or it comes up.'
+    im=base((5,6,10),(10,8,10)); d=ImageDraw.Draw(im)
+    d.rectangle([800,300,1120,720],fill=(14,18,30)); d.line([960,300,960,720],fill=(5,5,8),width=12); d.line([800,510,1120,510],fill=(5,5,8),width=12)
+    for x in (780,1140): d.polygon([(x-30,270),(x+30,270),(x+50,960),(x-40,960)],fill=(10,9,13))
+    d.rectangle([60,420,300,640],fill=(16,14,16)); d.rectangle([74,434,286,626],fill=(26,24,28))  # generic art print
+    vgrad(d,(0,1135,BW,BH),(26,22,30),(10,9,12))
+    for k in range(6): d.arc([-200+k*60,1350+k*70,BW+200-k*60,2300],195,345,fill=(34,30,40),width=10)
+    px,py=cx,1080; pw,ph=380,740
+    d.rounded_rectangle([px-pw-14,py-ph-14,px+pw+14,py+ph+14],70,fill=(8,8,10))
+    sw_,sh_=2*pw-40,2*ph-60; scr=Image.new('RGB',(sw_,sh_),(14,14,18)); sd=ImageDraw.Draw(scr)
+    sd.rectangle([0,0,sw_,170],fill=(26,26,32)); sd.ellipse([40,60,120,140],fill=(90,80,70)); sd.text((150,72),'Host',font=F(B,40),fill=(240,240,245)); sd.text((150,120),'online',font=F(B,26),fill=(110,220,140))
+    sd.text((sw_/2,215),'3:06 AM',font=F(B,26),fill=(140,140,150),anchor='mm')
+    def bub(y,txt,me):
+        f=F(B,36); lines=txt.split('\n'); w=max(sd.textlength(l,font=f) for l in lines)+60; h=len(lines)*48+36
+        x0=sw_-w-30 if me else 30
+        sd.rounded_rectangle([x0,y,x0+w,y+h],30,fill=(40,110,220) if me else (50,50,58))
+        for k,l in enumerate(lines): sd.text((x0+30,y+18+k*48),l,font=f,fill=(250,250,252))
+        return y+h+24
+    y=bub(260,"Someone is knocking\non the basement door",True)
+    y=bub(y,"You said there's\nno basement??",True)
+    sd.text((sw_-40,y-14),'Read 3:06 AM',font=F(B,24),fill=(130,130,140),anchor='ra'); y+=30
+    f=F(B,46); txt=["Rule 3:","Answer it.","Or it comes up."]
+    sd.rounded_rectangle([30,y,560,y+len(txt)*62+40],30,fill=(120,22,18))
+    for k,l in enumerate(txt): sd.text((60,y+22+k*62),l,font=f,fill=(255,240,236))
+    sd.rounded_rectangle([30,sh_-110,sw_-30,sh_-40],34,fill=(34,34,40)); sd.text((70,sh_-75),'Message',font=F(B,30),fill=(120,120,130),anchor='lm')
+    im.paste(scr,(px-pw+20,py-ph+30)); im=glow(im,(px,py),520,(140,40,40),0.45); im.paste(scr,(px-pw+20,py-ph+30)); d=ImageDraw.Draw(im)
+    d.rounded_rectangle([px-90,py-ph+8,px+90,py-ph+40],16,fill=(4,4,6))
+    for s in (-1,1):
+        hx=px+s*(pw+10)
+        d.polygon([(hx,py+80),(hx+s*70,py+40),(hx+s*150,py+500),(hx+s*120,BH),(hx-s*60,BH),(hx-s*30,py+560)],fill=(34,28,28))
+        for f_ in range(3): d.rounded_rectangle([min(hx,hx-s*70),py+130+f_*95,max(hx,hx-s*70),py+190+f_*95],26,fill=(46,38,36))
+    return noise_tex(im,7)
 SC={'title':title,'outside':outside,'phone':phone,'phone_red':lambda:phone(True),'cam_empty':lambda:cam(0),'cam_man':lambda:cam(1),'cam_man_close':lambda:cam(2),'dark':dark,'dark_red':lambda:dark(True),
     'building':building,'elev9':lambda:elevator(9),'elev13':lambda:elevator(13),'hall':lambda:hall(False),'hall_woman':lambda:hall(True),'room_woman':room,
     'cabin':cabin,'door':door,'prints':prints,'closet':lambda:closet(False),'closet_woman':lambda:closet(True),
@@ -886,7 +1041,8 @@ SC={'title':title,'outside':outside,'phone':phone,'phone_red':lambda:phone(True)
     'lighthouse':lighthouse,'lantern':lantern,'lh_stairs':lambda:lh_stairs(0),'lh_stairs_man':lambda:lh_stairs(1),'lh_stairs_close':lambda:lh_stairs(2),
     'logbook':logbook,'logbook_red':lambda:logbook(True),
     'lh_door':lh_door,'lh_door_open':lambda:lh_door(True),'dock_boat':dock_boat,'logbook_shift':lambda:logbook(True,('Shift change.','Hers is over.','Mine begins.')),
-    'ring_notify':lambda:ring_phone('notify'),'ring_far':lambda:ring_phone('far'),'ring_close':lambda:ring_phone('close'),'keypad':keypad,'slats':slats,'porch':porch}
+    'ring_notify':lambda:ring_phone('notify'),'ring_far':lambda:ring_phone('far'),'ring_close':lambda:ring_phone('close'),'keypad':keypad,'slats':slats,'porch':porch,
+    'bnb_house':bnb_house,'bnb_rules':bnb_rules,'bnb_rules_red':lambda:bnb_rules(True),'bnb_door':bnb_door,'bnb_door_turn':lambda:bnb_door('turn'),'bnb_text':bnb_text}
 def caption(text):
     lay=Image.new('RGBA',(W,H),(0,0,0,0)); d=ImageDraw.Draw(lay); f=F(B,70)
     words=text.split(); lines=[]; cur=''
