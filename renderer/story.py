@@ -1,31 +1,30 @@
 LINES = [
-    ("Something is knocking. From inside the basement.", "bnb_door", 0.25),
-    ("It started at check-in. A cheap Airbnb outside Dayton.", "bnb_house", 0.2),
-    ("The host left three rules on the fridge.", "bnb_rules", 0.2),
-    ("Rule one. Never open the basement door.", "bnb_rules", 0.2),
-    ("Rule two. This house has no basement.", "bnb_rules_red", 0.25),
-    ("At 3:04 AM, the knocking started.", "hall", 0.2),
-    ("Then a voice behind the door said my name.", "bnb_door", 0.25),
-    ("I texted the host. He answered in one second.", "bnb_text", 0.25),
-    ("Rule three. Answer it. Or it comes up.", "bnb_text", 0.6),
-    ("Then the doorknob started to turn.", "bnb_door_turn", 0.3),
+    ("The doorknob was turning. So I answered it.", "bnb_door_turn", 0.25),
+    ("I said, hello? The knocking stopped.", "bnb_door", 0.2),
+    ("Thank you. Now open the door.", "bnb_door", 0.25),
+    ("I opened it. Stairs went down into red light.", "bnb_stairs", 0.2),
+    ("A woman sat at the bottom, holding a suitcase.", "bnb_stairs_woman", 0.2),
+    ("Her luggage tag said, checked in, 1998.", "bnb_tag", 0.25),
+    ("She walked up past me. Then the door slammed.", "bnb_stairs_up", 0.2),
+    ("Three deadbolts locked from the other side.", "bnb_stairs_up", 0.25),
+    ("The host texted. Checkout is when the next guest answers.", "bnb_text_checkout", 0.6),
+    ("Tonight someone new checked in. So I'm knocking.", "bnb_house", 0.3),
 ]
 CAPTIONS = [
-    "Something is knocking. From INSIDE the basement.",
-    "It started at check-in. A cheap Airbnb outside Dayton.",
-    "The host left three rules on the fridge.",
-    "Rule one. Never open the basement door.",
-    "Rule two. This house has NO basement.",
-    "At 3:04 AM, the knocking started.",
-    "Then a voice behind the door said my name.",
-    "I texted the host. He answered in one second.",
-    "\"Rule three. Answer it. Or it comes up.\"",
-    "Then the doorknob started to turn...",
+    "The doorknob was turning. So I ANSWERED it.",
+    "I said, \"Hello?\" The knocking stopped.",
+    "\"Thank you. Now open the door.\"",
+    "I opened it. Stairs went down into red light.",
+    "A woman sat at the bottom, holding a suitcase.",
+    "Her luggage tag said, \"Checked in, 1998.\"",
+    "She walked up past me. Then the door SLAMMED.",
+    "Three deadbolts locked from the other side.",
+    "The host texted. \"Checkout is when the next guest answers.\"",
+    "Tonight someone new checked in. So I'm knocking...",
 ]
 # Female (whisper) voice lines, matched exactly by text
-FEMALE = ()
-HOOK = "DON'T OPEN IT"
-TOPLABEL = "PART 1"
-ENDTEXT = ("FOLLOW FOR", "PART 2")
-LOCATION = ("DAYTON, OHIO", "JANUARY 9, 2022")
+FEMALE = ("Thank you. Now open the door.",)
+HOOK = "I ANSWERED IT"
+TOPLABEL = "PART 2"
+LOCATION = ("DAYTON, OHIO", "JANUARY 10, 2022")
 LOOP = False
