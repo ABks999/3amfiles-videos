@@ -1,30 +1,30 @@
 LINES = [
-    ("The doorknob was turning. So I answered it.", "bnb_door_turn", 0.25),
-    ("I said, hello? The knocking stopped.", "bnb_door", 0.2),
-    ("Thank you. Now open the door.", "bnb_door", 0.25),
-    ("I opened it. Stairs went down into red light.", "bnb_stairs", 0.2),
-    ("A woman sat at the bottom, holding a suitcase.", "bnb_stairs_woman", 0.2),
-    ("Her luggage tag said, checked in, 1998.", "bnb_tag", 0.25),
-    ("She walked up past me. Then the door slammed.", "bnb_stairs_up", 0.2),
-    ("Three deadbolts locked from the other side.", "bnb_stairs_up", 0.25),
-    ("The host texted. Checkout is when the next guest answers.", "bnb_text_checkout", 0.6),
-    ("Tonight someone new checked in. So I'm knocking.", "bnb_house", 0.3),
+    ("My Alexa just whispered, she moved to the closet.", "alexa", 0.25),
+    ("It's 3:04 AM. I live alone.", "alexa_room", 0.25),
+    ("I checked the voice history in the app.", "voice_app", 0.2),
+    ("Every night at three. A user called Guest.", "voice_app", 0.2),
+    ("Alexa, tell me when he's asleep.", "voice_play", 0.25),
+    ("A woman's voice. Recorded right here in my room.", "alexa_room", 0.2),
+    ("Tonight's request was new. Tell him I'm in the closet.", "voice_new", 0.25),
+    ("The closet door was open an inch.", "closet", 0.2),
+    ("Then Alexa whispered again. He's looking. Now.", "alexa_red", 0.6),
+    ("The closet was a distraction. She's under my bed.", "under_bed", 0.3),
 ]
 CAPTIONS = [
-    "The doorknob was turning. So I ANSWERED it.",
-    "I said, \"Hello?\" The knocking stopped.",
-    "\"Thank you. Now open the door.\"",
-    "I opened it. Stairs went down into red light.",
-    "A woman sat at the bottom, holding a suitcase.",
-    "Her luggage tag said, \"Checked in, 1998.\"",
-    "She walked up past me. Then the door SLAMMED.",
-    "Three deadbolts locked from the other side.",
-    "The host texted. \"Checkout is when the next guest answers.\"",
-    "Tonight someone new checked in. So I'm knocking...",
+    "My Alexa just whispered, \"She moved to the closet.\"",
+    "It's 3:04 AM. I live ALONE.",
+    "I checked the voice history in the app.",
+    "Every night at three. A user called \"Guest.\"",
+    "\"Alexa, tell me when he's asleep.\"",
+    "A woman's voice. Recorded right here in my room.",
+    "Tonight's request was new. \"Tell him I'm in the closet.\"",
+    "The closet door was open an inch.",
+    "Then Alexa whispered again. \"He's looking. Now.\"",
+    "The closet was a distraction. She's under my BED.",
 ]
 # Female (whisper) voice lines, matched exactly by text
-FEMALE = ("Thank you. Now open the door.",)
-HOOK = "I ANSWERED IT"
-TOPLABEL = "PART 2"
-LOCATION = ("DAYTON, OHIO", "JANUARY 10, 2022")
+FEMALE = ("Alexa, tell me when he's asleep.",)
+HOOK = "SHE'S IN HERE"
+TOPLABEL = ""
+LOCATION = ("BOISE, IDAHO", "FEBRUARY 2, 2023")
 LOOP = False

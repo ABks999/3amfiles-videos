@@ -1136,6 +1136,167 @@ def bnb_text(mode='rule'):  # phone in a dark bedroom: chat with the host, 'Rule
         d.polygon([(hx,py+80),(hx+s*70,py+40),(hx+s*150,py+500),(hx+s*120,BH),(hx-s*60,BH),(hx-s*30,py+560)],fill=(34,28,28))
         for f_ in range(3): d.rounded_rectangle([min(hx,hx-s*70),py+130+f_*95,max(hx,hx-s*70),py+190+f_*95],26,fill=(46,38,36))
     return noise_tex(im,7)
+def _speaker(im,x,y,s,ring=(60,200,230)):  # generic cylinder smart speaker; (x,y)=bottom centre, s=scale
+    w=110*s; h=260*s
+    im=glow(im,(x,y-h),int(170*s),ring,0.55); d=ImageDraw.Draw(im)
+    d.rectangle([x-w,y-h,x+w,y],fill=(22,24,30)); d.ellipse([x-w,y-h*0.06-w*0.25,x+w,y+w*0.25-h*0.06],fill=(22,24,30))
+    for k in range(9):  # fabric mesh rows
+        yy=y-h*0.12-k*h*0.085; d.arc([x-w,yy-w*0.22,x+w,yy+w*0.22],10,170,fill=(30,32,40),width=max(2,int(3*s)))
+    d.rectangle([x-w,y-h*0.98,x-w*0.82,y-h*0.05],fill=(14,15,20))  # shading left edge
+    d.rectangle([x+w*0.55,y-h*0.98,x+w,y-h*0.05],fill=(34,36,44))  # highlight right edge (lit from screen side)
+    d.ellipse([x-w,y-h-w*0.25,x+w,y-h+w*0.25],fill=(30,32,40))  # top
+    d.ellipse([x-w,y-h-w*0.25,x+w,y-h+w*0.25],outline=ring,width=max(4,int(12*s)))  # light ring
+    d.ellipse([x-w*0.5,y-h-w*0.12,x+w*0.5,y-h+w*0.12],fill=(18,20,26))
+    for b in (-1,1): d.ellipse([x+b*w*0.25-6*s,y-h-5*s,x+b*w*0.25+6*s,y-h+5*s],fill=(50,52,60))
+    return im
+def alexa(mode='whisper'):  # close-up: smart speaker glowing on a nightstand at 3 AM, bedroom and a closet door ajar behind it
+    red=(mode=='red'); ring=(230,40,30) if red else (60,200,230)
+    im=base((6,8,14),(10,9,12)); d=ImageDraw.Draw(im)
+    for x in range(0,BW,110): d.line([x,0,x,1150],fill=(10,12,18),width=2)  # wallpaper stripes
+    # closet far right behind, door ajar with a black gap
+    d.rectangle([760,320,1150,1150],fill=(18,17,20)); d.rectangle([780,340,1130,1150],fill=(28,26,28))
+    d.polygon([(900,350),(1120,330),(1120,1150),(900,1150)],fill=(34,31,32)); d.rectangle([884,350,904,1150],fill=(2,2,3))
+    d.ellipse([918,740,936,758],fill=(90,80,60))  # knob
+    if red:  # two pale eyes in the gap
+        for ex in (889,899): d.ellipse([ex-4,640,ex+4,648],fill=(220,215,190))
+    # window left with moon, curtains
+    d.rectangle([60,330,420,760],fill=(14,20,34)); im=moon(im,280,450,38); d=ImageDraw.Draw(im)
+    d.line([240,330,240,760],fill=(5,5,8),width=12); d.line([60,545,420,545],fill=(5,5,8),width=12)
+    for x in (50,430): d.polygon([(x-30,300),(x+30,300),(x+50,1000),(x-40,1000)],fill=(12,10,14))
+    im=cone(im,(240,545),(120,1150),(700,1150),(60,80,130),0.15,40); d=ImageDraw.Draw(im)
+    d.rectangle([0,1150,BW,1160],fill=(20,18,22)); vgrad(d,(0,1160,BW,BH),(22,20,24),(8,7,9))
+    # nightstand top (foreground, close)
+    vgrad(d,(0,1180,BW,1260),(52,40,34),(40,30,26)); d.rectangle([0,1260,BW,BH],fill=(26,20,18))
+    d.line([0,1182,BW,1182],fill=(80,64,52),width=4)
+    for k in range(5): d.line([0,1300+k*90,BW,1300+k*90+20],fill=(32,25,22),width=5)  # wood grain on the drawer front
+    d.rounded_rectangle([cx-120,1440,cx+120,1480],12,fill=(46,36,30))  # drawer handle
+    # objects: lamp (off) left, glass of water, phone face down
+    d.polygon([(150,860),(330,860),(380,1060),(100,1060)],fill=(40,36,38)); d.rectangle([228,1060,252,1200],fill=(30,28,30)); d.ellipse([170,1190,310,1225],fill=(30,28,30))
+    d.rectangle([800,1080,880,1215],fill=(60,70,80)); d.rectangle([808,1110,872,1210],fill=(40,52,64))
+    d.rounded_rectangle([890,1190,1080,1225],10,fill=(12,12,14))
+    im=_speaker(im,cx-20,1215,1.35,ring); d=ImageDraw.Draw(im)
+    for k in range(3):  # whisper sound waves
+        r=200+k*70; d.arc([cx-20-r,1215-351-r*0.5,cx-20+r,1215-351+r*0.5],200,340,fill=tuple(int(c*(0.5-0.12*k)) for c in ring),width=6)
+    im=cone(im,(cx-20,860),(cx-260,1215),(cx+220,1215),ring,0.18,30)
+    d=ImageDraw.Draw(im); d.polygon([(0,BH),(0,1600),(140,1650),(260,BH)],fill=(6,5,6))  # foreground blanket edge
+    return noise_tex(im,7)
+def alexa_room():  # wide: me sitting up in bed in the dark, speaker glowing on the nightstand, closet door ajar across the room
+    im=base((6,8,14),(10,9,12)); d=ImageDraw.Draw(im)
+    for x in range(0,BW,110): d.line([x,0,x,1180],fill=(10,12,18),width=2)
+    d.rectangle([70,330,430,780],fill=(14,20,34)); im=moon(im,300,460,40); d=ImageDraw.Draw(im)
+    d.line([250,330,250,780],fill=(5,5,8),width=12); d.line([70,555,430,555],fill=(5,5,8),width=12)
+    for x in (55,445): d.polygon([(x-30,300),(x+30,300),(x+50,1020),(x-40,1020)],fill=(12,10,14))
+    # closet on the right wall, door ajar, black gap
+    d.rectangle([700,360,1110,1180],fill=(18,17,20)); d.rectangle([720,380,1090,1180],fill=(30,27,28))
+    d.polygon([(850,390),(1080,370),(1080,1180),(850,1180)],fill=(36,32,32)); d.rectangle([832,390,852,1180],fill=(2,2,3))
+    d.ellipse([866,780,884,798],fill=(90,80,60))
+    d.rectangle([520,420,660,560],fill=(20,18,22)); d.rectangle([532,432,648,548],fill=(30,30,36))  # picture frame
+    d.rectangle([0,1180,BW,1192],fill=(22,20,24)); vgrad(d,(0,1192,BW,BH),(24,21,24),(9,8,10))
+    for k in range(8): d.line([0,1250+k*k*9,BW,1250+k*k*9],fill=(18,16,18),width=3)  # floorboards
+    im=cone(im,(250,555),(100,1500),(800,1500),(60,80,130),0.2,40); d=ImageDraw.Draw(im)
+    # bed: headboard left, blanket
+    d.rounded_rectangle([-40,1000,620,1220],30,fill=(30,26,30))  # headboard
+    d.polygon([(-40,1200),(640,1200),(760,1640),(-40,1640)],fill=(44,40,54))
+    for k in range(5): d.arc([-200+k*40,1260+k*60,760-k*20,1900],200,330,fill=(56,52,66),width=8)
+    d.rounded_rectangle([60,1130,330,1230],30,fill=(150,150,165))  # pillow
+    # me sitting up: silhouette
+    d.ellipse([300,980,400,1100],fill=(16,14,16)); d.polygon([(260,1110),(440,1110),(480,1340),(230,1340)],fill=(18,16,20))
+    d.line([440,1150,560,1250],fill=(18,16,20),width=34)  # arm reaching toward the nightstand
+    # nightstand right of bed with speaker
+    d.rectangle([560,1210,760,1420],fill=(36,28,24)); d.rectangle([550,1195,770,1215],fill=(50,40,32))
+    d.rounded_rectangle([640,1290,680,1306],6,fill=(56,44,36))
+    im=_speaker(im,660,1196,0.6); d=ImageDraw.Draw(im)
+    im=cone(im,(660,1040),(420,1190),(900,1190),(60,200,230),0.15,30); d=ImageDraw.Draw(im)
+    d.polygon([(BW-120,250),(BW,250),(BW,BH),(BW-170,BH)],fill=(5,5,7))  # doorframe foreground
+    return noise_tex(im,7)
+def voice_app(mode='list'):  # phone in a dark bedroom showing the speaker app's voice history; new = tonight's red entry; play = waveform playing
+    im=base((5,6,10),(10,8,10)); d=ImageDraw.Draw(im)
+    d.rectangle([820,300,1130,720],fill=(14,18,30)); d.line([975,300,975,720],fill=(5,5,8),width=12); d.line([820,510,1130,510],fill=(5,5,8),width=12)
+    for x in (800,1150): d.polygon([(x-30,270),(x+30,270),(x+50,960),(x-40,960)],fill=(10,9,13))
+    im=_speaker(im,170,1120,0.5,(60,200,230) if mode!='new' else (230,40,30)); d=ImageDraw.Draw(im)
+    d.rectangle([20,1120,330,1135],fill=(40,32,28))
+    vgrad(d,(0,1135,BW,BH),(26,22,30),(10,9,12))
+    for k in range(6): d.arc([-200+k*60,1350+k*70,BW+200-k*60,2300],195,345,fill=(34,30,40),width=10)
+    px,py=cx,1060; pw,ph=380,740
+    d.rounded_rectangle([px-pw-14,py-ph-14,px+pw+14,py+ph+14],70,fill=(8,8,10))
+    sw_,sh_=2*pw-40,2*ph-60; scr=Image.new('RGB',(sw_,sh_),(14,16,20)); sd=ImageDraw.Draw(scr)
+    sd.rectangle([0,0,sw_,170],fill=(22,26,32)); sd.text((40,60),'<',font=F(B,46),fill=(80,200,230)); sd.text((sw_/2,85),'Voice History',font=F(B,44),fill=(240,242,246),anchor='mm')
+    sd.text((40,200),'Bedroom Speaker',font=F(B,30),fill=(120,130,140))
+    if mode=='play':
+        sd.rounded_rectangle([30,260,sw_-30,1060],30,fill=(28,32,38))
+        sd.text((70,300),'Today  3:00 AM',font=F(B,32),fill=(150,160,170)); sd.text((70,350),'User: Guest',font=F(B,40),fill=(240,242,246))
+        sd.text((70,420),'"Alexa, tell me',font=F(B,46),fill=(250,250,252)); sd.text((70,480),"when he's asleep.\"",font=F(B,46),fill=(250,250,252))
+        r=np.random.default_rng(4)
+        for k in range(46):  # waveform
+            x=70+k*13; a=(r.random()*0.8+0.2)*130*math.sin(k/46*math.pi)
+            sd.rectangle([x,750-a,x+7,750+a],fill=(80,200,230) if k<28 else (70,76,86))
+        sd.ellipse([sw_/2-60,920,sw_/2+60,1040],fill=(80,200,230)); sd.rectangle([sw_/2-22,955,sw_/2-8,1005],fill=(14,16,20)); sd.rectangle([sw_/2+8,955,sw_/2+22,1005],fill=(14,16,20))
+        sd.text((sw_/2,1110),'Playing recording...',font=F(B,32),fill=(150,160,170),anchor='mm')
+    else:
+        y=260; rows=[("Nov 11","3:00 AM"),("Nov 10","3:00 AM"),("Nov 9","3:00 AM"),("Nov 8","3:00 AM"),("Nov 7","3:00 AM")]
+        if mode=='new':
+            sd.rounded_rectangle([30,y,sw_-30,y+300],26,fill=(120,22,18))
+            sd.text((60,y+28),'Today  3:03 AM',font=F(B,30),fill=(255,210,200)); sd.text((sw_-60,y+28),'NEW',font=F(B,30),fill=(255,240,236),anchor='ra')
+            sd.text((60,y+80),'User: Guest',font=F(B,38),fill=(255,240,236))
+            sd.text((60,y+150),'"Tell him I\'m',font=F(B,46),fill=(255,250,248)); sd.text((60,y+210),'in the closet."',font=F(B,46),fill=(255,250,248))
+            y+=330; rows=rows[:3]
+        for dte,tm in rows:
+            sd.rounded_rectangle([30,y,sw_-30,y+190],22,fill=(30,34,40))
+            sd.text((60,y+24),f'{dte}  {tm}',font=F(B,28),fill=(140,150,160)); sd.text((sw_-60,y+24),'Guest',font=F(B,28),fill=(230,120,100),anchor='ra')
+            sd.text((60,y+80),'"Alexa, tell me',font=F(B,36),fill=(225,228,232)); sd.text((60,y+126),"when he's asleep.\"",font=F(B,36),fill=(225,228,232))
+            y+=212
+    im.paste(scr,(px-pw+20,py-ph+30)); im=glow(im,(px,py),520,(140,40,40) if mode=='new' else (50,120,150),0.45); im.paste(scr,(px-pw+20,py-ph+30)); d=ImageDraw.Draw(im)
+    d.rounded_rectangle([px-90,py-ph+8,px+90,py-ph+40],16,fill=(4,4,6))
+    d.line([px-pw+60,py-ph+120,px-pw+220,py-ph+520],fill=(60,70,80),width=4)
+    for s in (-1,1):
+        hx=px+s*(pw+10)
+        d.polygon([(hx,py+80),(hx+s*70,py+40),(hx+s*150,py+500),(hx+s*120,BH),(hx-s*60,BH),(hx-s*30,py+560)],fill=(34,28,28))
+        for f_ in range(3): d.rounded_rectangle([min(hx,hx-s*70),py+130+f_*95,max(hx,hx-s*70),py+190+f_*95],26,fill=(46,38,36))
+    return noise_tex(im,7)
+def under_bed():  # low view along the floorboards: the dark gap under my bed, a pale woman's face peeking out and long fingers reaching across the floor, speaker glowing red above
+    im=base((6,6,10),(8,7,9)); d=ImageDraw.Draw(im)
+    d.rectangle([0,300,BW,560],fill=(12,13,20))  # wall behind
+    d.rectangle([BW-360,520,BW,545],fill=(46,36,30)); d.rectangle([BW-340,545,BW-40,820],fill=(30,24,20))  # nightstand
+    vgrad(d,(0,1240,BW,BH),(30,20,20),(14,10,10))  # floor
+    for k in range(12): yy=1240+k*k*6; d.line([0,yy,BW,yy],fill=(20,14,14),width=3)
+    for k in range(-8,10): d.line([cx+k*50,1240,cx+k*230,BH],fill=(22,15,15),width=3)
+    # blanket hanging over the side of the bed, with folds and a quilted pattern
+    vgrad(d,(0,560,BW,900),(44,40,56),(32,28,40))
+    for k in range(9): x=k*150-40; d.polygon([(x,620),(x+40,620),(x+90,900),(x+20,900)],fill=(28,25,36))
+    for y in range(600,880,70):
+        for x in range(30,BW,120): d.line([x,y,x+40,y+20],fill=(54,50,66),width=3)
+    for x in range(0,BW,90): d.chord([x-10,860,x+100,960],0,180,fill=(36,32,46))  # wavy hem
+    d.rectangle([0,930,BW,962],fill=(24,18,16))  # bed frame rail
+    d.rectangle([0,962,BW,1250],fill=(1,1,2))  # the black gap under the bed
+    for x in (30,BW-90): d.rectangle([x,950,x+60,1262],fill=(28,20,18))
+    # her face, tilted, peeking out of the dark; hair drawn behind and around it
+    fx,fy=cx+60,1110
+    im=glow(im,(fx,fy),170,(110,80,80),0.3); d=ImageDraw.Draw(im)
+    d.ellipse([fx-150,fy-140,fx+140,fy+150],fill=(5,4,5))  # hair mass
+    for k in range(10): d.line([fx-140+k*30,fy+60,fx-170+k*34,fy+160+_R.normal(0,15)],fill=(5,4,5),width=16)  # hair spilling on the floor
+    d.ellipse([fx-80,fy-105,fx+80,fy+105],fill=(112,106,104))
+    d.ellipse([fx-60,fy-90,fx+70,fy+95],fill=(124,118,114))  # light on the face
+    for ex in (-34,34):
+        d.ellipse([fx+ex-28,fy-24,fx+ex+28,fy+20],fill=(52,44,46))  # dark sunken sockets
+        d.ellipse([fx+ex-17,fy-11,fx+ex+17,fy+9],fill=(228,222,206)); d.ellipse([fx+ex-4,fy-5,fx+ex+4,fy+3],fill=(8,6,6))  # wide stare, pinpoint pupils
+    d.ellipse([fx-14,fy+52,fx+14,fy+66],fill=(30,20,22))  # small open mouth
+    for k in range(7):  # long hair strands hanging over the face
+        x0=fx-95+k*16 if k<4 else fx+40+(k-4)*18; d.line([x0,fy-115,x0+_R.normal(0,6),fy+120],fill=(5,4,5),width=13)
+    d.polygon([(fx-110,fy-125),(fx+90,fy-125),(fx+70,fy-80),(fx-100,fy-70)],fill=(5,4,5))  # hairline
+    # long pale grey hand reaching out of the dark across the floor toward the camera
+    hx,hy=cx-210,1330
+    d.polygon([(hx-20,1200),(hx+50,1200),(hx+60,hy),(hx-40,hy+5)],fill=(92,86,84))  # thin wrist from the dark
+    d.polygon([(hx-60,hy-5),(hx+75,hy-12),(hx+95,hy+40),(hx+90,hy+95),(hx-80,hy+100),(hx-85,hy+40)],fill=(118,110,106))  # palm
+    for k,(ax,ay) in enumerate(((-130,230),(-55,275),(20,285),(90,245))):
+        bx,by=hx-62+k*50,hy+92
+        mx,my=(bx+hx+ax)/2+8,(by+hy+ay)/2
+        d.line([bx,by,mx,my],fill=(118,110,106),width=22); d.line([mx,my,hx+ax,hy+ay],fill=(118,110,106),width=17)
+        d.ellipse([mx-12,my-12,mx+12,my+12],fill=(126,118,112)); d.polygon([(hx+ax-9,hy+ay-6),(hx+ax+9,hy+ay-6),(hx+ax,hy+ay+16)],fill=(150,140,134))  # long nails
+    d.line([hx+90,hy+30,hx+165,hy+115],fill=(118,110,106),width=20)  # thumb
+    im=_speaker(im,BW-190,522,0.55,(230,40,30)); d=ImageDraw.Draw(im)
+    im=cone(im,(BW-190,380),(cx-300,1600),(BW,1600),(200,40,30),0.16,40); d=ImageDraw.Draw(im)
+    d.polygon([(0,BH),(0,1660),(160,1720),(300,BH)],fill=(5,4,5))
+    return noise_tex(im,7)
 SC={'title':title,'outside':outside,'phone':phone,'phone_red':lambda:phone(True),'cam_empty':lambda:cam(0),'cam_man':lambda:cam(1),'cam_man_close':lambda:cam(2),'dark':dark,'dark_red':lambda:dark(True),
     'building':building,'elev9':lambda:elevator(9),'elev13':lambda:elevator(13),'hall':lambda:hall(False),'hall_woman':lambda:hall(True),'room_woman':room,
     'cabin':cabin,'door':door,'prints':prints,'closet':lambda:closet(False),'closet_woman':lambda:closet(True),
@@ -1147,7 +1308,8 @@ SC={'title':title,'outside':outside,'phone':phone,'phone_red':lambda:phone(True)
     'lh_door':lh_door,'lh_door_open':lambda:lh_door(True),'dock_boat':dock_boat,'logbook_shift':lambda:logbook(True,('Shift change.','Hers is over.','Mine begins.')),
     'ring_notify':lambda:ring_phone('notify'),'ring_far':lambda:ring_phone('far'),'ring_close':lambda:ring_phone('close'),'keypad':keypad,'slats':slats,'porch':porch,
     'bnb_house':bnb_house,'bnb_rules':bnb_rules,'bnb_rules_red':lambda:bnb_rules(True),'bnb_door':bnb_door,'bnb_door_turn':lambda:bnb_door('turn'),'bnb_text':bnb_text,
-    'bnb_stairs':bnb_stairs,'bnb_stairs_woman':lambda:bnb_stairs('woman'),'bnb_stairs_up':lambda:bnb_stairs('up'),'bnb_tag':bnb_tag,'bnb_text_checkout':lambda:bnb_text('checkout')}
+    'bnb_stairs':bnb_stairs,'bnb_stairs_woman':lambda:bnb_stairs('woman'),'bnb_stairs_up':lambda:bnb_stairs('up'),'bnb_tag':bnb_tag,'bnb_text_checkout':lambda:bnb_text('checkout'),
+    'alexa':alexa,'alexa_red':lambda:alexa('red'),'alexa_room':alexa_room,'voice_app':voice_app,'voice_new':lambda:voice_app('new'),'voice_play':lambda:voice_app('play'),'under_bed':under_bed}
 def caption(text):
     lay=Image.new('RGBA',(W,H),(0,0,0,0)); d=ImageDraw.Draw(lay); f=F(B,70)
     words=text.split(); lines=[]; cur=''
