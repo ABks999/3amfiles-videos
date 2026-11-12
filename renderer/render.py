@@ -1,3 +1,22 @@
+# ===================== GROWTH RULES v3 (channel manager, from Studio Analytics 12 Nov 2026) =====================
+# These OVERRIDE v2 below wherever they disagree. 64-87% swiped away in the first 2-4 s, Part 1s did worst,
+# best video was a RULE opener ("Never answer three knocks at 3 AM", 36% stayed). Audience: mostly Philippines/Malaysia.
+# - NO Part 1 / Part 2 any more. Every story ends on its own (TOPLABEL stays ""). A sequel gets its own standalone hook.
+# - LINE 1 = the impossible fact or a rule, max 12 words. Never open with a place, date, time or job.
+#   Write 3 hook variants (impossible fact / rule / direct "you") and keep the most concrete and impossible one.
+# - Line 2 must open a NEW question within 3 seconds.
+# - At least every 3rd story uses the Rules format: "Never..." or "Rule one at...".
+# - The last story line loops back to line 1 (LOOP = True). Then the sign-off as its own final LINES entry:
+#   ("File closed. For now.", <same scene as the last line>, 0.2). tts.py reads it in a low, calm voice and
+#   render.py/sfx.py treat the line BEFORE it as the twist.
+# - 25-35 seconds in total.
+# - Visuals: line 1's scene must SHOW the shock itself (the wrong thing), never a neutral establishing shot.
+#   Frame 1 has movement and no fade/flash; the spoken line 1 is shown word for word as big text in frame 1
+#   (render.py does this automatically from LINES[0]; the bottom caption is hidden during line 1).
+#   story.py sets FILE = "FILE #015" etc. (shown small in the top-left corner the whole video).
+#   If a whispered line fits, put the whisper (FEMALE) in the opening line: it stops the scroll.
+# - HOOK is no longer shown when OPEN_TEXT is on (default). Keep HOOK = "" or a short fallback.
+# ==========================================================================================================
 # ===================== GROWTH RULES v2 (Hamza approved, 10 Nov 2026) =====================
 # YouTube data after the first 7 Shorts: only 19% of viewers "stayed to watch", 81% swiped away in the
 # first second. These rules OVERRIDE any older line/word counts in the task prompt:
@@ -42,7 +61,10 @@ from PIL import Image, ImageDraw, ImageFilter
 sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 from draw import *
 import story as _story
-HOOK=getattr(_story,'HOOK','')          # big text shown on top during the first line
+HOOK=getattr(_story,'HOOK','')          # big text shown on top during the first line (only if OPEN_TEXT is False)
+FILE=getattr(_story,'FILE','')          # e.g. "FILE #015", small in the top-left corner
+OPEN_TEXT=getattr(_story,'OPEN_TEXT',True)  # v3: frame 1 shows the spoken line 1 word for word as big text
+SIGNOFF=getattr(_story,'SIGNOFF','File closed. For now.')
 TOPLABEL=getattr(_story,'TOPLABEL','')  # e.g. "PART 1" / "PART 2"
 LOCATION=getattr(_story,'LOCATION',None) # e.g. ("DULUTH, MINNESOTA","OCTOBER 14, 2019")
 SERIF='/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf'
@@ -89,7 +111,8 @@ segs=[]; prev=0.0
 for i,(a,b) in enumerate(times):
     segs.append((LINES[i][1],CAPTIONS[i],prev,b)); prev=b
 segs.append((LINES[-1][1] if getattr(_story,'LOOP',False) else 'dark_red','__END__',prev,prev+1.2))
-TWIST=len(LINES)-1  # last line = twist: punch-in, shake, red flash
+HAS_SIGN=len(LINES)>1 and LINES[-1][0].strip()==SIGNOFF
+TWIST=len(LINES)-(2 if HAS_SIGN else 1)  # last story line = twist: punch-in, shake, red flash (the sign-off comes after it)
 
 def brand_layer():
     lay=Image.new('RGBA',(W,H),(0,0,0,0)); d=ImageDraw.Draw(lay)
@@ -101,11 +124,11 @@ def brand_layer():
 def hook_layer(text):
     lay=Image.new('RGBA',(W,H),(0,0,0,0)); d=ImageDraw.Draw(lay); f=F(SERIF,96)
     for sz in (96,90,84,78):  # prefer ONE big line: shrink a little before wrapping
-        if d.textlength(text,font=F(SERIF,sz))<=980: f=F(SERIF,sz); break
+        if d.textlength(text,font=F(SERIF,sz))<=940: f=F(SERIF,sz); break
     words=text.split(); lines=[]; cur=''
     for w in words:
         t=(cur+' '+w).strip()
-        if d.textlength(t,font=f)>980 and cur: lines.append(cur); cur=w
+        if d.textlength(t,font=f)>940 and cur: lines.append(cur); cur=w
         else: cur=t
     lines.append(cur); y=340
     sh=Image.new('RGBA',(W,H),(0,0,0,0)); sd=ImageDraw.Draw(sh)
@@ -122,7 +145,16 @@ def end_layer():
     d.text((W//2,1640),ENDTEXT[0],font=F(B,70),fill=(255,255,255),anchor='mm',stroke_width=8,stroke_fill=(0,0,0))
     d.text((W//2,1735),ENDTEXT[1],font=F(B,70),fill=(225,40,30),anchor='mm',stroke_width=8,stroke_fill=(0,0,0))
     return lay
-BRAND=brand_layer(); HOOKL=hook_layer(HOOK) if HOOK else None
+def file_layer():
+    lay=Image.new('RGBA',(W,H),(0,0,0,0))
+    if not FILE: return lay
+    d=ImageDraw.Draw(lay); f=F(M,38)
+    d.rectangle([52,92,64,104],fill=(200,30,25,235))
+    d.text((76,98),FILE,font=f,fill=(235,230,220,215),anchor='lm',stroke_width=3,stroke_fill=(0,0,0,170))
+    return lay
+FILEL=file_layer()
+OPEN=LINES[0][0].strip()
+BRAND=brand_layer(); HOOKL=hook_layer(OPEN if OPEN_TEXT else HOOK) if (OPEN_TEXT or HOOK) else None
 _s=TOPLABEL; TOPLABEL=''; BRAND0=None
 if _s:  # first line: only the PART label, no channel name (less clutter in the first second)
     BRAND0=Image.new('RGBA',(W,H),(0,0,0,0)); _d=ImageDraw.Draw(BRAND0)
@@ -204,8 +236,7 @@ def frame(scene,cap_img,tg,ti,first,dur=2.5,twist=False):
     fl=0.9 if random.random()<0.02 else 1.0  # rare light flicker
     a*=fl
     if ti<0.18 and n>0: a=a*(ti/0.18)  # dip from black between lines
-    if first and ti<0.1: a=a+120*(1-ti/0.1)  # white flash on the very first frames
-    if dur-ti<0.1 and not twist: a=a*max(0.0,(dur-ti)/0.1)
+    if dur-ti<0.1 and not twist and not first: a=a*max(0.0,(dur-ti)/0.1)  # no black frames inside line 1
     if twist: r=max(0.0,1-ti/1.2); a[...,0]+=60*r; a[...,1]*=1-0.35*r; a[...,2]*=1-0.35*r  # slow red pulse
     glitch=(twist and ti<0.25)
     if glitch:  # RGB split
@@ -220,14 +251,15 @@ def frame(scene,cap_img,tg,ti,first,dur=2.5,twist=False):
     if first: 
         if BRAND0 is not None: im.alpha_composite(BRAND0)
     else: im.alpha_composite(BRAND)
+    im.alpha_composite(FILEL)
     if first and HOOKL is not None:
         if ti<0.15:  # hook pops in
-            sc=1.25-0.25*ti/0.15; hl=HOOKL.resize((int(W*sc),int(H*sc))); ox=(hl.width-W)//2; oy=int(330*sc-330)
+            sc=(1.07-0.07*ti/0.15) if OPEN_TEXT else (1.25-0.25*ti/0.15); hl=HOOKL.resize((int(W*sc),int(H*sc))); ox=(hl.width-W)//2; oy=int(330*sc-330)
             im.alpha_composite(hl.crop((ox,oy,ox+W,oy+H)))
         else: im.alpha_composite(HOOKL)
     ll=location_layer(tg)
     if ll is not None: im.alpha_composite(ll)
-    if cap_img is not None: im.alpha_composite(cap_img)
+    if cap_img is not None and not (first and OPEN_TEXT and HOOKL is not None): im.alpha_composite(cap_img)  # line 1 text is already big on screen
     return im.convert('RGB').tobytes()
 
 def cap_at(i,t):
