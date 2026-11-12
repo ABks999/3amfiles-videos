@@ -60,6 +60,9 @@ import sys, json, os, subprocess, random, math, numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 from draw import *
+try:  # new scenes live in scenes_extra.py (draw.py is too big to rewrite through the GitHub connector)
+    import scenes_extra; SC.update(scenes_extra.SC_EXTRA)
+except ImportError: pass
 import story as _story
 HOOK=getattr(_story,'HOOK','')          # big text shown on top during the first line (only if OPEN_TEXT is False)
 FILE=getattr(_story,'FILE','')          # e.g. "FILE #015", small in the top-left corner
