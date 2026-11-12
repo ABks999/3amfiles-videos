@@ -1,27 +1,28 @@
 LINES = [
-    ("My Uber app says my driver never picked me up.", "ride_cancel", 0.25),
-    ("It's 2:51 AM. I'm sitting in his back seat.", "back_seat", 0.2),
-    ("Gray Camry. Right plate. Driver, Dale.", "ride_card", 0.2),
-    ("I looked up. His eyes were already in the mirror.", "rear_eyes", 0.25),
-    ("We passed my exit. Then the child locks clicked.", "back_exit", 0.2),
-    ("Headlights behind us. Another gray Camry. Same plate.", "rear_window", 0.25),
-    ("A text from Dale. I'm behind you. Who is driving?", "ride_text", 0.2),
-    ("The man in the mirror just smiled.", "rear_eyes_red", 0.6),
-    ("Dale texted again. Get out. That car was crushed in 2019.", "ride_text_red", 0.3),
+    ("Someone keeps calling the front desk from my room.", "phone", 0.25),
+    ("It's 3:07 AM. Hotel room 414. I'm alone.", "hall", 0.2),
+    ("The clerk sounds scared. Sir, please stop calling us.", "phone", 0.2),
+    ("I haven't touched the phone. I was asleep.", "closet", 0.25),
+    ("Then I heard it. Beeping. Behind the bathroom door.", "door", 0.2),
+    ("Hotel bathrooms have phones. Someone in there was dialing.", "door", 0.25),
+    ("Then my cell phone rang. No caller ID.", "phone_red", 0.2),
+    ("A woman whispered. She knew my name.", "phone_red", 0.6),
+    ("Don't open the bathroom. I'm already in your closet.", "closet_woman", 0.3),
 ]
 CAPTIONS = [
-    "My Uber app says my driver NEVER picked me up.",
-    "It's 2:51 AM. I'm sitting in his back seat.",
-    "Gray Camry. Right plate. Driver: Dale.",
-    "I looked up. His eyes were already in the mirror.",
-    "We passed my exit. Then the child locks clicked.",
-    "Headlights behind us. Another gray Camry. SAME plate.",
-    "A text from Dale. \"I'm behind you. Who is driving?\"",
-    "The man in the mirror just smiled.",
-    "Dale texted again. \"Get out. That car was CRUSHED in 2019.\"",
+    "Someone keeps calling the front desk FROM MY ROOM.",
+    "It's 3:07 AM. Hotel room 414. I'm alone.",
+    "The clerk sounds scared. \"Sir, please stop calling us.\"",
+    "I haven't touched the phone. I was asleep.",
+    "Then I heard it. Beeping. Behind the bathroom door.",
+    "Hotel bathrooms have phones. Someone in there was DIALING.",
+    "Then my cell phone rang. NO CALLER ID.",
+    "A woman whispered. She knew my name.",
+    "\"Don't open the bathroom. I'm already in YOUR CLOSET.\"",
 ]
-FEMALE = ()
-HOOK = "WHO'S DRIVING?"
-TOPLABEL = ""
-LOCATION = ("SACRAMENTO, CALIFORNIA", "MARCH 9, 2024")
+FEMALE = ("Don't open the bathroom. I'm already in your closet.",)
+HOOK = "DON'T PICK UP"
+TOPLABEL = "PART 1"
+ENDTEXT = ("FOLLOW FOR", "PART 2")
+LOCATION = ("RENO, NEVADA", "JANUARY 22, 2023")
 LOOP = False
