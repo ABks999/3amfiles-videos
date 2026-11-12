@@ -1297,6 +1297,155 @@ def under_bed():  # low view along the floorboards: the dark gap under my bed, a
     im=cone(im,(BW-190,380),(cx-300,1600),(BW,1600),(200,40,30),0.16,40); d=ImageDraw.Draw(im)
     d.polygon([(0,BH),(0,1660),(160,1720),(300,BH)],fill=(5,4,5))
     return noise_tex(im,7)
+# ---------- Ep13: rideshare at night (back seat of a gray sedan) ----------
+_PLATE='7KDL 214'
+def _car_inside(im,mirror_mode=None,exit_sign=False,lock_red=False):  # view from the back seat: windshield, dark highway, driver's head on the left, rear-view mirror top centre
+    d=ImageDraw.Draw(im)
+    vgrad(d,(0,300,BW,900),(6,10,22),(14,16,26)); stars(d,40,620,31)
+    for x in range(-40,BW+80,70): pine(d,x,900,120+(x*31)%110,40,(5,7,9))
+    d.polygon([(0,900),(BW,900),(BW,1000),(0,1000)],fill=(12,12,14))
+    vx=cx+40
+    d.polygon([(vx-20,900),(vx+20,900),(BW,1010),(0,1010)],fill=(28,28,31))
+    for k in range(5): t=k/4; y=905+100*t**1.6; d.line([vx-2-40*t,y,vx+2+40*t,y+6+12*t],fill=(200,175,80),width=int(2+5*t))
+    im=cone(im,(vx-160,1100),(vx-40,900),(vx+60,900),(200,190,150),0.35,26); im=cone(im,(vx+160,1100),(vx-40,900),(vx+60,900),(200,190,150),0.35,26)
+    d=ImageDraw.Draw(im)
+    if exit_sign:
+        d.line([BW-420,640,BW-420,900],fill=(60,62,64),width=8); d.line([BW-300,640,BW-300,900],fill=(60,62,64),width=8)
+        d.rounded_rectangle([BW-490,500,BW-230,680],12,fill=(22,92,52)); d.rounded_rectangle([BW-482,508,BW-238,672],10,outline=(220,230,220),width=4)
+        d.text((BW-375,555),'EXIT 41',font=F(B,42),fill=(235,240,235),anchor='mm'); d.text((BW-375,625),'ELM ST',font=F(B,34),fill=(235,240,235),anchor='mm')
+        d.polygon([(BW-262,640),(BW-245,605),(BW-279,605)],fill=(235,240,235))
+    # roof liner, pillars, dashboard
+    d.polygon([(0,0),(BW,0),(BW,300),(0,300)],fill=(18,17,20)); d.arc([-200,180,BW+200,520],190,350,fill=(24,23,26),width=30)
+    d.polygon([(0,300),(160,300),(0,1150)],fill=(9,9,10)); d.polygon([(BW,300),(BW-160,300),(BW,1150)],fill=(9,9,10))
+    d.polygon([(0,1000),(BW,1000),(BW,1140),(0,1140)],fill=(20,19,21)); d.rectangle([0,1140,BW,1260],fill=(14,13,15))
+    im=glow(im,(260,1060),120,(40,110,140),0.5); d=ImageDraw.Draw(im)
+    d.rounded_rectangle([180,1030,340,1090],12,fill=(30,90,110)); d.text((260,1060),'64',font=F(B,34),fill=(200,240,250),anchor='mm')  # speedo
+    d.rounded_rectangle([cx-120,1040,cx+120,1120],14,fill=(26,60,80))  # centre screen
+    for k in range(4): d.line([cx-100,1060+k*15,cx+90,1058+k*16],fill=(50,110,130),width=3)
+    # rear-view mirror
+    mx,my=cx,420
+    d.rectangle([mx-14,300,mx+14,370],fill=(26,25,28))
+    d.rounded_rectangle([mx-230,360,mx+230,500],40,fill=(30,29,32)); d.rounded_rectangle([mx-212,374,mx+212,486],32,fill=(14,16,24))
+    if mirror_mode:
+        red=mirror_mode=='red'
+        d.rectangle([mx-212,374,mx+212,486],fill=(40,30,28) if not red else (60,22,20))
+        d.rounded_rectangle([mx-212,374,mx+212,486],32,outline=(30,29,32),width=10)
+        d.polygon([(mx-200,380),(mx+200,380),(mx+180,420),(mx-180,420)],fill=(10,9,10))  # brow/hair shadow
+        ec=(240,230,210) if not red else (255,236,220)
+        for ex in (-70,70):
+            d.ellipse([mx+ex-46,my+4,mx+ex+46,my+44],fill=(70,58,54)); d.ellipse([mx+ex-30,my+12,mx+ex+30,my+38],fill=ec)
+            d.ellipse([mx+ex-9,my+15,mx+ex+9,my+35],fill=(10,8,8))
+        if red:  # smiling eyes: cheeks push the lower lids up
+            for ex in (-70,70): d.chord([mx+ex-50,my+24,mx+ex+50,my+80],180,360,fill=(84,66,60))
+            im=glow(im,(mx-70,my+22),40,(255,60,40),0.5); im=glow(im,(mx+70,my+22),40,(255,60,40),0.5); d=ImageDraw.Draw(im)
+        d.line([mx-180,380,mx-120,486],fill=(70,72,84),width=4)
+    else:
+        d.line([mx-180,380,mx-120,486],fill=(50,54,68),width=5)
+    d.ellipse([mx+150,380,mx+190,404],fill=(160,30,20) if lock_red else (40,40,44))
+    # driver: back of head, shoulders, headrest on the left
+    hx=330
+    d.rounded_rectangle([hx-150,760,hx+150,1000],50,fill=(22,21,24))  # headrest
+    d.rectangle([hx-40,980,hx-20,1060],fill=(40,40,44)); d.rectangle([hx+20,980,hx+40,1060],fill=(40,40,44))
+    d.ellipse([hx-120,700,hx+120,960],fill=(6,6,7)); d.ellipse([hx+95,800,hx+135,870],fill=(8,8,9))  # head + ear
+    d.polygon([(hx-260,1260),(hx-170,1010),(hx+170,1010),(hx+270,1260)],fill=(8,8,10))  # shoulders/seat back
+    # empty passenger seat on the right
+    px=BW-320
+    d.rounded_rectangle([px-130,800,px+130,990],50,fill=(32,31,34)); d.rectangle([px-30,985,px+30,1060],fill=(40,40,44))
+    d.polygon([(px-220,1260),(px-170,1040),(px+170,1040),(px+230,1260)],fill=(26,25,28))
+    d.line([px-160,1060,px+150,1250],fill=(18,18,20),width=10)  # seat seam
+    return im
+def back_seat(mode=''):  # wide from my seat in the back: the driver ahead of me, my knees, the empty seat beside me, the door lock
+    im=base((6,8,16),(12,10,12)); im=_car_inside(im,exit_sign=(mode=='exit'),lock_red=(mode=='exit')); d=ImageDraw.Draw(im)
+    vgrad(d,(0,1260,BW,BH),(30,28,32),(14,13,15))  # back bench
+    d.rounded_rectangle([40,1300,520,1520],60,fill=(22,21,24)); d.rounded_rectangle([60,1320,500,1500],50,fill=(28,27,30))  # my knees/jeans
+    d.rounded_rectangle([620,1290,1180,1560],50,fill=(40,38,42)); d.rounded_rectangle([640,1310,1160,1540],44,fill=(46,44,48))  # empty seat beside me
+    d.line([900,1310,900,1540],fill=(30,28,32),width=8)
+    d.polygon([(1150,1280),(BW,1260),(BW,1620),(1130,1640)],fill=(18,17,20))  # rear door
+    if mode=='exit':
+        im=glow(im,(1170,1330),60,(230,30,20),0.8); d=ImageDraw.Draw(im)
+        d.rounded_rectangle([1150,1300,1190,1360],10,fill=(220,40,30)); d.text((960,1400),'CHILD LOCK ON',font=F(B,30),fill=(230,70,60),anchor='mm')
+    d.rectangle([1150,1240,1172,1300],fill=(70,70,76))  # lock pin
+    d.line([40,1260,40,1700],fill=(60,58,40),width=14)  # seat belt strap
+    d.polygon([(0,BH),(0,1640),(240,1700),(420,BH)],fill=(8,8,9))
+    return noise_tex(im,7)
+def rear_eyes(red=False):  # close on the rear-view mirror: the driver's eyes staring back at me
+    im=base((6,8,16),(12,10,12)); im=_car_inside(im,mirror_mode=('red' if red else 'eyes'))
+    im=im.crop((cx-380,110,cx+380,110+int(760*BH/BW))).resize((BW,BH),Image.BICUBIC)  # punch in on the mirror
+    if red: im=glow(im,(cx,500),380,(160,20,15),0.35)
+    return noise_tex(im,8)
+def rear_window():  # I turn around: through the rear window, a second gray sedan right behind us, same plate
+    im=base((5,8,18),(10,10,14)); d=ImageDraw.Draw(im); stars(d,50,600,37)
+    for x in range(-40,BW+80,80): pine(d,x,860,180+(x*23)%140,55,(5,7,9))
+    d.rectangle([0,860,BW,BH],fill=(14,14,16))
+    d.polygon([(cx-30,860),(cx+30,860),(BW+300,BH),(-300,BH)],fill=(26,26,29))
+    # the other car
+    c=cx; y=1100
+    d.polygon([(c-300,y-170),(c+300,y-170),(c+360,y+20),(c-360,y+20)],fill=(70,72,76))  # roof/windshield frame
+    d.polygon([(c-260,y-150),(c+260,y-150),(c+310,y+5),(c-310,y+5)],fill=(16,18,24))  # dark windshield, nobody visible
+    figure(d,c-150,y+20,150,(6,6,8))  # a driver shape, barely there
+    d.rounded_rectangle([c-420,y+10,c+420,y+260],40,fill=(84,86,90)); d.rectangle([c-200,y+70,c+200,y+160],fill=(30,30,34))  # body + grille
+    for k in range(5): d.line([c-190,y+85+k*16,c+190,y+85+k*16],fill=(54,54,58),width=4)
+    d.rounded_rectangle([c-130,y+180,c+130,y+245],8,fill=(232,232,226)); d.text((c,y+213),_PLATE,font=F(B,44),fill=(30,50,120),anchor='mm')
+    for s in (-1,1):
+        im=glow(im,(c+s*300,y+110),150,(240,235,210),0.9); im=cone(im,(c+s*300,y+110),(c+s*700,BH),(c+s*100,BH),(200,195,170),0.25,40)
+    d=ImageDraw.Draw(im)
+    for s in (-1,1): d.ellipse([c+s*300-70,y+80,c+s*300+70,y+140],fill=(255,252,240))
+    d.rounded_rectangle([c-150,y+175,c+150,y+250],8,fill=(236,236,230)); d.rectangle([c-150,y+175,c+150,y+188],fill=(150,30,30)); d.text((c,y+220),_PLATE,font=F(B,50),fill=(20,40,110),anchor='mm')
+    # our rear window frame and back shelf (foreground)
+    d.rectangle([0,0,BW,330],fill=(16,15,18)); d.polygon([(0,330),(150,330),(40,1500),(0,1500)],fill=(9,9,10)); d.polygon([(BW,330),(BW-150,330),(BW-40,1500),(BW,1500)],fill=(9,9,10))
+    for k in range(8): d.line([140,420+k*60,BW-140,420+k*60],fill=(60,22,18),width=2)  # defroster lines
+    d.rectangle([0,1480,BW,BH],fill=(18,17,19)); d.polygon([(0,1480),(BW,1480),(BW,1540),(0,1540)],fill=(26,25,28))
+    d.rounded_rectangle([200,1420,460,1500],30,fill=(22,21,24)); d.rounded_rectangle([750,1420,1010,1500],30,fill=(22,21,24))  # rear headrests
+    d.polygon([(0,BH),(0,1700),(260,1760),(380,BH)],fill=(8,8,9)); d.polygon([(BW,BH),(BW,1680),(BW-300,1740),(BW-420,BH)],fill=(10,9,10))  # my hand on the seat back
+    return noise_tex(im,7)
+def ride_app(mode='cancel'):  # my phone in the back seat with the ride app; driver's eyes faint in the mirror above
+    im=base((6,8,16),(12,10,12)); im=_car_inside(im,mirror_mode=('eyes' if mode in ('cancel','text_red') else None)); d=ImageDraw.Draw(im)
+    vgrad(d,(0,1260,BW,BH),(30,28,32),(14,13,15))
+    px,py=cx,1180; pw,ph=320,560
+    d.rounded_rectangle([px-pw-14,py-ph-14,px+pw+14,py+ph+14],64,fill=(8,8,10))
+    sw_,sh_=2*pw-36,2*ph-56; scr=Image.new('RGB',(sw_,sh_),(16,18,22)); sd=ImageDraw.Draw(scr)
+    red=mode in ('cancel','text_red')
+    if mode in ('cancel','card'):
+        my0=0 if mode=='cancel' else 480
+        sd.rectangle([0,my0,sw_,my0+560],fill=(28,32,38))
+        for k in range(9): sd.line([0,my0+40+k*70,sw_,my0+10+k*75],fill=(40,46,54),width=10)
+        for k in range(6): sd.line([60+k*110,my0,30+k*120,my0+560],fill=(40,46,54),width=10)
+        sd.line([100,my0+500,180,my0+380,380,my0+330,470,my0+150],fill=(70,170,230),width=14,joint='curve')
+        sd.ellipse([86,my0+486,114,my0+514],fill=(255,255,255)); sd.rounded_rectangle([450,my0+130,490,my0+170],8,fill=(240,240,240))
+        if mode=='cancel': sd.rectangle([0,560,sw_,sh_],fill=(20,22,26))
+        else: sd.rectangle([0,0,sw_,480],fill=(20,22,26))
+        if mode=='cancel':
+            sd.rounded_rectangle([24,600,sw_-24,940],26,fill=(130,22,18))
+            sd.text((sw_/2,660),'TRIP CANCELLED',font=F(B,42),fill=(255,236,230),anchor='mm')
+            sd.text((sw_/2,740),'Your driver Dale',font=F(B,36),fill=(255,220,212),anchor='mm')
+            sd.text((sw_/2,790),'cancelled the trip.',font=F(B,36),fill=(255,220,212),anchor='mm')
+            sd.text((sw_/2,870),'Reason: rider no-show',font=F(B,32),fill=(255,190,180),anchor='mm')
+            sd.text((sw_/2,990),'Finding you a new driver...',font=F(B,30),fill=(150,160,170),anchor='mm')
+        else:
+            sd.text((40,40),'On trip  2:51 AM',font=F(B,32),fill=(140,150,160))
+            sd.ellipse([40,110,160,230],fill=(60,64,72)); sd.ellipse([78,130,122,174],fill=(30,32,36)); sd.chord([56,170,144,270],180,360,fill=(30,32,36))
+            sd.text((190,120),'Dale',font=F(B,52),fill=(240,242,246)); sd.text((190,190),'4.9  Gray Camry',font=F(B,32),fill=(150,160,170))
+            sd.rounded_rectangle([40,280,sw_-40,370],14,fill=(196,196,188)); sd.text((sw_/2,325),_PLATE,font=F(B,48),fill=(30,50,120),anchor='mm')
+            sd.text((sw_/2,425),'Picked up 2:38 AM',font=F(B,30),fill=(120,200,140),anchor='mm')
+    else:
+        sd.rectangle([0,0,sw_,140],fill=(24,28,34)); sd.text((40,50),'<',font=F(B,44),fill=(70,170,230)); sd.text((sw_/2,70),'Dale  (driver)',font=F(B,38),fill=(240,242,246),anchor='mm')
+        sd.text((sw_/2,190),'2:57 AM',font=F(B,26),fill=(120,130,140),anchor='mm')
+        def bub(y,lines,col):
+            h=40+len(lines)*52; sd.rounded_rectangle([30,y,sw_-90,y+h],30,fill=col)
+            for k,t in enumerate(lines): sd.text((60,y+24+k*52),t,font=F(B,38),fill=(245,245,248))
+            return y+h+30
+        y=bub(240,["I'm behind you.","Who is driving?"],(48,52,60))
+        if mode=='text_red':
+            y=bub(y,["Get out.","That car was","crushed in 2019."],(150,24,18))
+        sd.rounded_rectangle([30,sh_-110,sw_-30,sh_-30],40,fill=(30,34,40)); sd.text((70,sh_-70),'Message...',font=F(B,30),fill=(110,120,130),anchor='lm')
+    im.paste(scr,(px-pw+18,py-ph+28)); im=glow(im,(px,py),460,(150,30,25) if red else (50,110,150),0.4); im.paste(scr,(px-pw+18,py-ph+28)); d=ImageDraw.Draw(im)
+    d.rounded_rectangle([px-80,py-ph+6,px+80,py-ph+36],14,fill=(4,4,6))
+    d.line([px-pw+50,py-ph+110,px-pw+190,py-ph+470],fill=(60,70,80),width=4)
+    for s in (-1,1):  # my hands holding the phone
+        hx=px+s*(pw+10)
+        d.polygon([(hx,py+80),(hx+s*70,py+40),(hx+s*150,py+500),(hx+s*120,BH),(hx-s*60,BH),(hx-s*30,py+560)],fill=(34,28,28))
+        for f_ in range(3): d.rounded_rectangle([min(hx,hx-s*70),py+130+f_*95,max(hx,hx-s*70),py+190+f_*95],26,fill=(46,38,36))
+    return noise_tex(im,7)
 SC={'title':title,'outside':outside,'phone':phone,'phone_red':lambda:phone(True),'cam_empty':lambda:cam(0),'cam_man':lambda:cam(1),'cam_man_close':lambda:cam(2),'dark':dark,'dark_red':lambda:dark(True),
     'building':building,'elev9':lambda:elevator(9),'elev13':lambda:elevator(13),'hall':lambda:hall(False),'hall_woman':lambda:hall(True),'room_woman':room,
     'cabin':cabin,'door':door,'prints':prints,'closet':lambda:closet(False),'closet_woman':lambda:closet(True),
@@ -1309,7 +1458,9 @@ SC={'title':title,'outside':outside,'phone':phone,'phone_red':lambda:phone(True)
     'ring_notify':lambda:ring_phone('notify'),'ring_far':lambda:ring_phone('far'),'ring_close':lambda:ring_phone('close'),'keypad':keypad,'slats':slats,'porch':porch,
     'bnb_house':bnb_house,'bnb_rules':bnb_rules,'bnb_rules_red':lambda:bnb_rules(True),'bnb_door':bnb_door,'bnb_door_turn':lambda:bnb_door('turn'),'bnb_text':bnb_text,
     'bnb_stairs':bnb_stairs,'bnb_stairs_woman':lambda:bnb_stairs('woman'),'bnb_stairs_up':lambda:bnb_stairs('up'),'bnb_tag':bnb_tag,'bnb_text_checkout':lambda:bnb_text('checkout'),
-    'alexa':alexa,'alexa_red':lambda:alexa('red'),'alexa_room':alexa_room,'voice_app':voice_app,'voice_new':lambda:voice_app('new'),'voice_play':lambda:voice_app('play'),'under_bed':under_bed}
+    'alexa':alexa,'alexa_red':lambda:alexa('red'),'alexa_room':alexa_room,'voice_app':voice_app,'voice_new':lambda:voice_app('new'),'voice_play':lambda:voice_app('play'),'under_bed':under_bed,
+    'ride_cancel':lambda:ride_app('cancel'),'ride_card':lambda:ride_app('card'),'ride_text':lambda:ride_app('text'),'ride_text_red':lambda:ride_app('text_red'),
+    'back_seat':back_seat,'back_exit':lambda:back_seat('exit'),'rear_eyes':rear_eyes,'rear_eyes_red':lambda:rear_eyes(True),'rear_window':rear_window}
 def caption(text):
     lay=Image.new('RGBA',(W,H),(0,0,0,0)); d=ImageDraw.Draw(lay); f=F(B,70)
     words=text.split(); lines=[]; cur=''
