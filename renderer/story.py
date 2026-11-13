@@ -1,28 +1,32 @@
 LINES = [
-    ("Someone keeps calling the front desk from my room.", "phone", 0.25),
-    ("It's 3:07 AM. Hotel room 414. I'm alone.", "hall", 0.2),
-    ("The clerk sounds scared. Sir, please stop calling us.", "phone", 0.2),
-    ("I haven't touched the phone. I was asleep.", "closet", 0.25),
-    ("Then I heard it. Beeping. Behind the bathroom door.", "door", 0.2),
-    ("Hotel bathrooms have phones. Someone in there was dialing.", "door", 0.25),
-    ("Then my cell phone rang. No caller ID.", "phone_red", 0.2),
-    ("A woman whispered. She knew my name.", "phone_red", 0.6),
-    ("Don't open the bathroom. I'm already in your closet.", "closet_woman", 0.3),
+    ("Never wave back at the mannequins after 3 AM.", "mall_wave", 0.25),
+    ("Rule two. Count them every hour. There are nine.", "mall_rules", 0.2),
+    ("At 1 AM, nine. At 2 AM, ten.", "mall_cctv", 0.2),
+    ("At 3 AM, the new one lifted its hand. And waved.", "mall_hall", 0.25),
+    ("I didn't wave back. I counted again.", "mall_cctv", 0.2),
+    ("Eleven. The new one wore a guard uniform.", "mall_cctv_guard", 0.2),
+    ("My name tag. My face.", "mall_cctv_guard", 0.25),
+    ("Then my reflection in the glass lifted its hand.", "mall_reflect", 0.2),
+    ("And I waved back without thinking.", "mall_reflect", 0.6),
+    ("Now I stand in the window, waiting for the next guard to wave.", "mall_guard", 0.3),
+    ("File closed. For now.", "mall_guard", 0.2),
 ]
 CAPTIONS = [
-    "Someone keeps calling the front desk FROM MY ROOM.",
-    "It's 3:07 AM. Hotel room 414. I'm alone.",
-    "The clerk sounds scared. \"Sir, please stop calling us.\"",
-    "I haven't touched the phone. I was asleep.",
-    "Then I heard it. Beeping. Behind the bathroom door.",
-    "Hotel bathrooms have phones. Someone in there was DIALING.",
-    "Then my cell phone rang. NO CALLER ID.",
-    "A woman whispered. She knew my name.",
-    "\"Don't open the bathroom. I'm already in YOUR CLOSET.\"",
+    "Never wave back at the mannequins after 3 AM.",
+    "Rule two. Count them every hour. There are NINE.",
+    "At 1 AM, nine. At 2 AM... TEN.",
+    "At 3 AM, the new one lifted its hand. And WAVED.",
+    "I didn't wave back. I counted again.",
+    "ELEVEN. The new one wore a GUARD UNIFORM.",
+    "My name tag. MY FACE.",
+    "Then my reflection in the glass LIFTED ITS HAND.",
+    "And I waved back... without thinking.",
+    "Now I stand in the window, waiting for the next guard to WAVE.",
+    "File closed. For now.",
 ]
-FEMALE = ("Don't open the bathroom. I'm already in your closet.",)
-HOOK = "DON'T PICK UP"
-TOPLABEL = "PART 1"
-ENDTEXT = ("FOLLOW FOR", "PART 2")
-LOCATION = ("RENO, NEVADA", "JANUARY 22, 2023")
-LOOP = False
+FEMALE = ("Never wave back at the mannequins after 3 AM.",)
+FILE = "FILE #015"
+HOOK = ""
+TOPLABEL = ""
+LOCATION = ("QUEZON CITY, METRO MANILA", "MARCH 9, 2024")
+LOOP = True
